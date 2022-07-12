@@ -1,6 +1,5 @@
 package com.example.peppermri.serverclient;
 
-package server_client;
 
 import com.example.peppermri.controller.Controller;
 import com.example.peppermri.messages.Message;
