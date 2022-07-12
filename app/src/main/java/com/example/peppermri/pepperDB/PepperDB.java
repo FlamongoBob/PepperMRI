@@ -3,7 +3,6 @@ package com.example.peppermri.pepperDB;
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -99,7 +98,7 @@ public class PepperDB {
         private static final String NAME = "Name";    //Column II
         private static final String MyPASSWORD = "Password";    // Column III
 
-        private static final String CREATE_TABLE_Employee =
+        private static final String CREATE_TABLE_EMPLOYEE =
                 "CREATE TABLE tblEmployee" +
                         " (intEmployeeID INTEGER PRIMARY KEY AUTOINCREMENT" +
                         ", strEmployeeTitle VARCHAR(255) " +
@@ -113,12 +112,13 @@ public class PepperDB {
                         ", FOREIGN KEY (intPictureID) REFERENCES tblPicture(intPictureID)" +
                         ", FOREIGN KEY (intRoleID) REFERENCES tblRole(intRoleID));";
 
+
         private static final String CREATE_TABLE_USER = "CREATE TABLE tblUser" +
                 " (intUserID INTEGER PRIMARY KEY AUTOINCREMENT" +
                 ", strUserName VARCHAR(255) " +
                 ", strPassword  VARCHAR(225) );";
 
-        private static final String CREATE_TABLE_Picture = "CREATE TABLE tblPicture" +
+        private static final String CREATE_TABLE_PICTURE = "CREATE TABLE tblPicture" +
                 " (intPictureID INTEGER PRIMARY KEY AUTOINCREMENT" +
                 ", strPath VARCHAR(255) );";
 
@@ -126,9 +126,29 @@ public class PepperDB {
                 " (intRoleID INTEGER PRIMARY KEY AUTOINCREMENT" +
                 ", strRole VARCHAR(255) );";
 
+        private static final String CREATE_TABLE_DOCUMENTS =
+                "CREATE TABLE tblDocument" +
+                        " (intDocumentID INTEGER PRIMARY KEY AUTOINCREMENT" +
+                        ", strDocumentName VARCHAR(255) " +
+                        ", strPath  VARCHAR(225)" +
+                        ", intTypeID  INTEGER" +
+                        ", intLanguageID  INTEGER"+
+                        ", FOREIGN KEY (intTypeID) REFERENCES tblType(intTypeID)" +
+                        ", FOREIGN KEY (intLanguageID) REFERENCES tblLanguage(intLanguageID));";
+
+        private static final String CREATE_TABLE_LANGUAGE = "CREATE TABLE tblLanguage" +
+                " (intLanguageID INTEGER PRIMARY KEY AUTOINCREMENT" +
+                ", strLanguage VARCHAR(255) );";
+
+        private static final String CREATE_TABLE_TYPE = "CREATE TABLE tblType" +
+                " (intTypeID INTEGER PRIMARY KEY AUTOINCREMENT" +
+                ", strType VARCHAR(255) );";
+
+
 
         private static final String DROP_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;
         private Context context;
+
 
         public myDbHelper(Context context) {
             super(context, DATABASE_NAME, null, DATABASE_Version);
@@ -138,10 +158,17 @@ public class PepperDB {
         public void onCreate(SQLiteDatabase db) {
 
             try {
+                //USER RELATED
                 db.execSQL(CREATE_TABLE_USER);
-                db.execSQL(CREATE_TABLE_Picture);
-                db.execSQL(CREATE_TABLE_Employee);
+                db.execSQL(CREATE_TABLE_PICTURE);
                 db.execSQL(CREATE_TABLE_ROLE);
+                db.execSQL(CREATE_TABLE_EMPLOYEE);
+
+                //DOCUMENTS RELATED
+                db.execSQL(CREATE_TABLE_LANGUAGE);
+                db.execSQL(CREATE_TABLE_TYPE);
+                db.execSQL(CREATE_TABLE_DOCUMENTS);
+
             } catch (Exception e) {
                 //Message.message(context, "" + e.getMessage());
             }
