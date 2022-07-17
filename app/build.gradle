@@ -41,8 +41,6 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 
     implementation 'com.aldebaran:qisdk:1.7.5'
-	implementation 'com.aldebaran:qisdk-design:1.7.5'
+    implementation 'com.aldebaran:qisdk-design:1.7.5'
 
-    implementation 'com.aldebaran:libqi-java-android:sdk-2016-05-16'
-    implementation 'com.aldebaran:qichatplayer:1.0.1'
 }

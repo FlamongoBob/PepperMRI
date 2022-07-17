@@ -1,11 +1,16 @@
 package com.example.peppermri.serverclient;
 
 
+import android.content.res.Resources;
+
+import com.example.peppermri.R;
 import com.example.peppermri.controller.Controller;
 import com.example.peppermri.messages.Message;
 import com.example.peppermri.messages.MessageLogin;
 import com.example.peppermri.messages.MessageSystem;
 import com.example.peppermri.messages.MessageType;
+import com.example.peppermri.messages.MessageUser;
+import com.example.peppermri.model.User;
 import com.example.peppermri.servermodel.ServerModel;
 
 import java.net.Socket;
@@ -17,21 +22,24 @@ public class ServerClient {
     Socket socket;
     Controller controller;
     public String name = "";
+    private int intUserId =-1;
     public static Logger logger = Logger.getLogger("");
     Thread t;
+    User user;
 
+    Resources resources = Resources.getSystem();
 
     /**
      * Constructor for the ServerClient class, that receive parameter to set global variable, so other classes
      * can be accessed when needed, to run functions.
      * Creates a new thread running
      *
-     * @param model
+     * @param serverModel
      * @param socket
      * @param controller
      */
-    public ServerClient(ServerModel model, Socket socket, Controller controller) {
-        this.serverModel = model;
+    public ServerClient(ServerModel serverModel, Socket socket, Controller controller) {
+        this.serverModel = serverModel;
         this.socket = socket;
         this.controller = controller;
 
@@ -62,45 +70,64 @@ public class ServerClient {
                             if (msg instanceof MessageLogin) {
                                 boolean isCorrect = false;
 
-                                /**TODO CHECK PASSWORD
-                                 * isCorrect = controller.checkPWDstatus(((MessageLogin) msg).getPassword(), ((MessageLogin) msg).getName());
-                                 */
+
+                                isCorrect = controller.checkLoginCredential(((MessageLogin) msg).getPassword(), ((MessageLogin) msg).getName());
+
 
                                 if (isCorrect) {
                                     ServerClient.this.name = ((MessageLogin) msg).getName();
 
                                     controller.hasClientJoined = true;
-                                    /**TODO USER CREATION & SEND USER
-                                     *controller.ServerPlayerCreation(((MessageLogin) msg).getName());
-                                     */
 
-                                    //view.textArea.appendText("System: " + ((JoinMsg) msg).getName() + " joined the Game" + "\n");
-                                    //controller.appendTextToChat( ((JoinMsg) msg).getName() + " joined the Game" , Controller.eTextType.System);
+                                    user = controller.getNewestUser();
+                                    if(user  != null) {
+                                        MessageUser msgU = new MessageUser(user.getIntUserID()
+                                                , user.getStrTitle()
+                                                , user.getStrFirstname()
+                                                , user.getStrLastname()
+                                                , user.getStrPicture()
+                                                , user.getIntRoleID()
+                                        );
 
-                                    MessageSystem messageSystem = new MessageSystem("Successful Login");
+                                        ServerClient.this.intUserId = user.getIntUserID();
+
+                                        msgU.send(socket);
+                                    }
+
+                                    MessageSystem messageSystem = new MessageSystem(resources.getString(R.string.msg_SucLogin));
                                     messageSystem.setType(MessageType.Successful_LogIn);
                                     messageSystem.send(socket);
 
                                 } else {
-                                    MessageSystem messageSystem = new MessageSystem("Unsuccessful Login");
+                                    MessageSystem messageSystem = new MessageSystem(resources.getString(R.string.msg_UnSucLogin));
                                     messageSystem.setType(MessageType.Unsuccessful_LogIn);
                                     messageSystem.send(socket);
+                                    serverModel.clearSpecificClient(ServerClient.this.name);
                                 }
 
 
                             } else if (msg instanceof MessageSystem) {
                                 if (msg.getType().equals(MessageType.Disconnect)) {
-                                    /**TODO Client Has Disconnected
-                                     * controller.ServerClientHasDisconnected();
-                                     */
+                                    controller.clientDisconnected(intUserId);
+                                    MessageSystem msgSys = new MessageSystem(resources.getString(R.string.msg_Disconnect));
+                                    msgSys.setType(MessageType.Disconnect);
+                                    msgSys.send(socket);
 
-                                    //controller.appendTextToChat(((DisconnectMessage) msg).getStrUsername() + " has disconnected from the Server", Controller.eTextType.System);
-                                    //controller.appendTextToChat("Server has reopened for next connection to a client", Controller.eTextType.System);
+                                    controller.clientDisconnected(intUserId);
+
                                 } else if (msg.getType().equals(MessageType.Test)) {
-
+                                    MessageSystem msgSys = new MessageSystem(resources.getString(R.string.msg_Test));
+                                    msgSys.setType(MessageType.Test);
+                                    msgSys.send(socket);
 
                                 } else if (msg.getType().equals(MessageType.LogOut)) {
 
+                                    controller.clientDisconnected(intUserId);
+                                    MessageSystem msgSys = new MessageSystem(resources.getString(R.string.msg_Disconnect));
+                                    msgSys.setType(MessageType.Disconnect);
+                                    msgSys.send(socket);
+
+                                    controller.clientDisconnected(intUserId);
 
                                 }
                             }
@@ -171,6 +198,16 @@ public class ServerClient {
             String err = ex.getMessage();
             err += "";
         }
+    }
+
+    public User getUser() {
+        return user;
+    }
+    public int getIntUserId(){
+        return intUserId;
+    }
+    public String getName(){
+        return name;
     }
 
     @Override

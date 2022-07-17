@@ -92,9 +92,6 @@ public abstract class Message {
                     message = new MessageSystem(parts[1]);
                     message.setType(MessageType.Test);
 
-                } else if (parts[0].equals(MessageType.User.toString())) {
-                    message = new MessageUser(Integer.parseInt(parts[1]),parts[2],parts[3],parts[4]);
-                    message.setType(MessageType.User);
                 }
             }
         } catch (IOException e) {

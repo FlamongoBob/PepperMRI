@@ -1,6 +1,8 @@
 package com.example.peppermri.server;
 
 import com.example.peppermri.controller.Controller;
+import com.example.peppermri.messages.MessageSystem;
+import com.example.peppermri.serverclient.ServerClient;
 import com.example.peppermri.servermodel.ServerModel;
 
 import java.net.InetAddress;
@@ -13,6 +15,7 @@ public class Server {
     /**
      * Constructor for the "Server" class, creating a new ServerModel at the same time passing the variables needed for
      * constuction, as well as sending the conrtoller, to be able to reach function in the controller class.
+     *
      * @param port
      * @param controller
      * @param inetAddress
@@ -44,18 +47,26 @@ public class Server {
             //serverModel.openListener();
         }
     }
-/*
-    /**
-     * Sending Chatmessages
-     * @param chatMessage
 
-    public void SendMessage(ChatMessage chatMessage) {
+    /**
+     * Sending System Messages
+     *
+     * @param msgSys
+     */
+    public void sendMessage(MessageSystem msgSys) {
         if (serverModel != null)
             if (serverModel.svClient != null) {
-                serverModel.svClient.broadcast(chatMessage);
+                serverModel.svClient.broadcast(msgSys);
             }
     }
 
+    public void sendMessage(MessageSystem msgSys ,int intUserID) {
+        if (serverModel != null && msgSys!= null && intUserID >0){
+            serverModel.sendMessage(msgSys,intUserID);
+        }
+    }
+
+    /*
     public void SendMessage(DisconnectMessage disconnectMessage) {
         if (serverModel != null) {
             if (serverModel.svClient != null) {

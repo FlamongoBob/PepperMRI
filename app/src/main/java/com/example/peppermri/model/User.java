@@ -1,31 +1,26 @@
 package com.example.peppermri.model;
 
 public class User {
-    //private String strUserName;
-    //private String strPassword;
     private int intUserID;
     private String strTitle;
     private String strFirstname;
     private String strLastname;
+    private String strPicture;
+    private int intRoleID;
 
-    public User(int intUserID ,String strTitle, String strFirstname, String strLastname){
+    public User(int intUserID ,String strTitle, String strFirstname, String strLastname, String strPicture, int intRoleID){
         this.intUserID = intUserID;
         this.strTitle = strTitle;
         this.strFirstname = strFirstname;
         this.strLastname = strLastname;
+        this.strPicture = strPicture;
+        this.intRoleID = intRoleID;
     }
 
     @Override
     public String toString() {
-        return intUserID +'|'+ strTitle+ '|' + strFirstname+ '|' + strLastname;
+        return intUserID +'|'+ strTitle+ '|' + strFirstname+ '|' + strLastname+'|'+ strPicture+'|'+ intRoleID;
     }
-    /*
-    public String toStringLoginInfo(){
-        return strUserName + '|' + strPassword;
-    }
-    public String toStringUserinfo(){
-        return strTitle+ '|' + strFirstname+ '|' + strLastname;
-    }*/
 
     public int getIntUserID() {
         return intUserID;
@@ -43,19 +38,12 @@ public class User {
         return strLastname;
     }
 
-    /*
-    public void setStrTitle(String strTitle) {
-        this.strTitle = strTitle;
+    public String getStrPicture() {
+        return strPicture;
     }
 
-    public void setStrFirstname(String strFirstname) {
-        this.strFirstname = strFirstname;
+    public int getIntRoleID() {
+        return intRoleID;
     }
-
-
-    public void setStrLastname(String strLastname) {
-        this.strLastname = strLastname;
-    }
-    */
 
 }

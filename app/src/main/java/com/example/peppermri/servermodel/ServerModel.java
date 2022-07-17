@@ -4,6 +4,7 @@ import androidx.databinding.ObservableArrayList;
 import androidx.databinding.ObservableList;
 
 import com.example.peppermri.controller.Controller;
+import com.example.peppermri.messages.MessageSystem;
 import com.example.peppermri.serverclient.ServerClient;
 
 import java.io.IOException;
@@ -124,13 +125,48 @@ public class ServerModel {
     }
 
     /**
-     * Clear arraylist with the client before recreating the server
+     * Clear arraylist with the clients before recreating the server
      */
     public void clearList() {
         if (srvClient.size() > 0) {
             srvClient.clear();
         }
 
+    }
+
+    public void clearSpecificClient(String strName) {
+        for (int i = 0; i < srvClient.size(); i++) {
+            ServerClient svClient = srvClient.get(i);
+            if(svClient.getName().equals(strName)){
+                svClient.stop();
+                controller.clientDisconnected(svClient.getIntUserId());
+                srvClient.remove(svClient);
+                i = srvClient.size() +1;
+            }
+        }
+    }
+
+    public void clearSpecificClient(int intUserID) {
+        for (int i = 0; i < srvClient.size(); i++) {
+            ServerClient svClient = srvClient.get(i);
+            if(svClient.getIntUserId() == intUserID){
+                svClient.stop();
+                controller.clientDisconnected(intUserID);
+                srvClient.remove(svClient);
+                i = srvClient.size() +1;
+            }
+        }
+    }
+
+
+    public void sendMessage(MessageSystem msgSys, int intUserID){
+        for (int i = 0; i < srvClient.size(); i++) {
+            ServerClient svClient = srvClient.get(i);
+            if(svClient.getIntUserId() == intUserID){
+                    svClient.send(msgSys);
+                i = srvClient.size() +1;
+            }
+        }
     }
 
     /**

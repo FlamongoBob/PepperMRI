@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">PepperMRI</string>
+    <string name="msg_UnSucLogin">Login was unsuccessful, Username or Password is wrong. Please try again</string>
+    <string name="msg_SucLogin">You have successfully Connected to Pepper!</string>
+    <string name="msg_Disconnect">You have successfully disconnected from Pepper!</string>
+    <string name="msg_Test">Testing connection to Pepper</string>
 </resources>
