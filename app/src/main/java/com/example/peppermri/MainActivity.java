@@ -1,6 +1,8 @@
 package com.example.peppermri;
 
 import android.os.Bundle;
+import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -20,8 +22,17 @@ Controller controller;
         setContentView(R.layout.activity_main);
 
 
-        pepperDB = new PepperDB(this);
-        this.controller = new Controller(pepperDB);
+        pepperDB = new PepperDB(this, this);
+        this.controller = new Controller(pepperDB,this);
+
+        TextView tv = findViewById(R.id.tvWorld);
+        Button btn = findViewById(R.id.button);
+        btn.setOnClickListener(view -> {
+
+            controller.check(tv);
+        });
+
+
 
     }
 
@@ -38,5 +49,9 @@ Controller controller;
     @Override
     public void onRobotFocusRefused(String reason) {
 
+    }
+
+    public Controller getController(){
+        return controller;
     }
 }

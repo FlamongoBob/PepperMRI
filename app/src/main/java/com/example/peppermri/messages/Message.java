@@ -92,6 +92,40 @@ public abstract class Message {
                     message = new MessageSystem(parts[1]);
                     message.setType(MessageType.Test);
 
+                } else if (parts[0].equals(MessageType.InsertUser.toString())) {
+                    message = new MessageI( parts[1]
+                            , parts[2]
+                            , parts[3]
+                            , parts[4]
+                            , Integer.parseInt(parts[5])
+                            , parts[6]
+                            , parts[7]
+                            , Integer.parseInt(parts[8])
+                    );
+
+                } else if (parts[0].equals(MessageType.UpdateUser.toString())) {
+                    message = new MessageU(Integer.parseInt(parts[1])
+                            , parts[2]
+                            , parts[3]
+                            , parts[4]
+
+                            , Integer.parseInt(parts[5])
+                            , parts[6]
+
+                            , Integer.parseInt(parts[7])
+                            , parts[8]
+                            , parts[9]
+
+                            , Integer.parseInt(parts[10])
+                            , Integer.parseInt(parts[11])
+                    );
+
+                } else if (parts[0].equals(MessageType.DeleteUser.toString())) {
+                    message = new MessageD(Integer.parseInt(parts[1])
+                            , Integer.parseInt(parts[2])
+                            , Integer.parseInt(parts[3])
+                    );
+
                 }
             }
         } catch (IOException e) {

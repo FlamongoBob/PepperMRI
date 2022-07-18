@@ -6,9 +6,12 @@ import android.content.res.Resources;
 import com.example.peppermri.R;
 import com.example.peppermri.controller.Controller;
 import com.example.peppermri.messages.Message;
+import com.example.peppermri.messages.MessageD;
+import com.example.peppermri.messages.MessageI;
 import com.example.peppermri.messages.MessageLogin;
 import com.example.peppermri.messages.MessageSystem;
 import com.example.peppermri.messages.MessageType;
+import com.example.peppermri.messages.MessageU;
 import com.example.peppermri.messages.MessageUser;
 import com.example.peppermri.model.User;
 import com.example.peppermri.servermodel.ServerModel;
@@ -129,6 +132,37 @@ public class ServerClient {
 
                                     controller.clientDisconnected(intUserId);
 
+                                }else if (msg.getType().equals(MessageType.InsertUser)) {
+
+                                   controller.insertUser((MessageI) msg);
+
+/*
+
+
+                                    controller.clientDisconnected(intUserId);
+*/
+                                }else if (msg.getType().equals(MessageType.UpdateUser)) {
+
+                                    controller.updateUser((MessageU) msg);
+
+/*
+                                    MessageSystem msgSys = new MessageSystem(resources.getString(R.string.msg_Disconnect));
+                                    msgSys.setType(MessageType.Disconnect);
+                                    msgSys.send(socket);
+
+                                    controller.clientDisconnected(intUserId);
+*/
+                                }else if (msg.getType().equals(MessageType.DeleteUser)) {
+
+                                    controller.deleteUser((MessageD) msg);
+
+/*
+                                    MessageSystem msgSys = new MessageSystem(resources.getString(R.string.msg_Disconnect));
+                                    msgSys.setType(MessageType.Disconnect);
+                                    msgSys.send(socket);
+
+                                    controller.clientDisconnected(intUserId);
+*/
                                 }
                             }
 
