@@ -527,10 +527,11 @@ public class PepperDB {
                 " (intRConfidentialInfoID INTEGER NOT NUll PRIMARY KEY AUTOINCREMENT" +
                 ", getsConfidentialInfo BIT NOT NUll " +
                 ", strINFO VARCHAR(255) NOT NUll );";
+
         private static final String INSERT_TBL_REC_CONFIDENTIAL_INFO1 = "" +
-                "INSERT INTO tblRConfidentialInfo VALUES(NULL , 1, '1=Receive');";
+                "INSERT INTO tblRConfidentialInfo VALUES(NULL , 1, '1 = Receive');";
         private static final String INSERT_TBL_REC_CONFIDENTIAL_INFO2 = "" +
-                "INSERT INTO tblRConfidentialInfo VALUES(NULL , 2, '2=PriorityReceive');";
+                "INSERT INTO tblRConfidentialInfo VALUES(NULL , 0, '0 = Not Receive');";
 
         private static final String CREATE_TABLE_DOCUMENTS =
                 "CREATE TABLE tblDocument" +
