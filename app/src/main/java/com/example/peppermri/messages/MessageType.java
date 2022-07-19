@@ -14,8 +14,7 @@ public enum MessageType {
     , InsertUser
     , UpdateUser
     , DeleteUser
-    , Unsuc_InserUser
-    , Suc_InserUser;
+    , Suc_IUD;
 
 }
 

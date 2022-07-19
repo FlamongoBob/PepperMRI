@@ -5,6 +5,8 @@ import android.content.res.Resources;
 
 import com.example.peppermri.R;
 import com.example.peppermri.controller.Controller;
+import com.example.peppermri.crypto.Decryption;
+import com.example.peppermri.crypto.Encryption;
 import com.example.peppermri.messages.Message;
 import com.example.peppermri.messages.MessageD;
 import com.example.peppermri.messages.MessageI;
@@ -29,6 +31,8 @@ public class ServerClient {
     public static Logger logger = Logger.getLogger("");
     Thread t;
     User user;
+    Encryption e = new Encryption();
+    Decryption d = new Decryption();
 
     Resources resources = Resources.getSystem();
 
@@ -73,23 +77,35 @@ public class ServerClient {
                             if (msg instanceof MessageLogin) {
                                 boolean isCorrect = false;
 
-
-                                isCorrect = controller.checkLoginCredential(((MessageLogin) msg).getPassword(), ((MessageLogin) msg).getName());
-
+                                isCorrect = controller.checkLoginCredential(
+                                        d.decrypt(((MessageLogin) msg).getPassword())
+                                        , d.decrypt(((MessageLogin) msg).getName())
+                                );
 
                                 if (isCorrect) {
-                                    ServerClient.this.name = ((MessageLogin) msg).getName();
+                                    ServerClient.this.name = d.decrypt(((MessageLogin) msg).getName());
 
                                     controller.hasClientJoined = true;
 
                                     user = controller.getNewestUser();
                                     if(user  != null) {
-                                        MessageUser msgU = new MessageUser(user.getIntUserID()
-                                                , user.getStrTitle()
-                                                , user.getStrFirstname()
-                                                , user.getStrLastname()
-                                                , user.getStrPicture()
+                                        MessageUser msgU = new MessageUser(user.getIntEmployeeID()
+                                                , e.encrypt(user.getStrTitle())
+                                                , e.encrypt(user.getStrFirstname())
+                                                , e.encrypt(user.getStrLastname())
+
+                                                , user.getIntPictureID()
+                                                , e.encrypt(user.getStrPicture())
+
                                                 , user.getIntRoleID()
+                                                , e.encrypt(user.getStrRole())
+
+
+                                                , user.getIntUserID()
+                                                , e.encrypt(user.getStrUserName())
+                                                , e.encrypt(user.getStrPassword())
+
+                                                , user.getIntGetsConfidentialInfo()
                                         );
 
                                         ServerClient.this.intUserId = user.getIntUserID();
@@ -136,33 +152,14 @@ public class ServerClient {
 
                                    controller.insertUser((MessageI) msg);
 
-/*
-
-
-                                    controller.clientDisconnected(intUserId);
-*/
                                 }else if (msg.getType().equals(MessageType.UpdateUser)) {
 
                                     controller.updateUser((MessageU) msg);
 
-/*
-                                    MessageSystem msgSys = new MessageSystem(resources.getString(R.string.msg_Disconnect));
-                                    msgSys.setType(MessageType.Disconnect);
-                                    msgSys.send(socket);
-
-                                    controller.clientDisconnected(intUserId);
-*/
                                 }else if (msg.getType().equals(MessageType.DeleteUser)) {
 
                                     controller.deleteUser((MessageD) msg);
 
-/*
-                                    MessageSystem msgSys = new MessageSystem(resources.getString(R.string.msg_Disconnect));
-                                    msgSys.setType(MessageType.Disconnect);
-                                    msgSys.send(socket);
-
-                                    controller.clientDisconnected(intUserId);
-*/
                                 }
                             }
 

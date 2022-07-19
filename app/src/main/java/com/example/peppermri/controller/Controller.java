@@ -4,7 +4,6 @@ import android.content.res.Resources;
 import android.widget.TextView;
 
 import com.example.peppermri.MainActivity;
-import com.example.peppermri.R;
 import com.example.peppermri.crypto.Decryption;
 import com.example.peppermri.messages.MessageD;
 import com.example.peppermri.messages.MessageI;
@@ -82,8 +81,8 @@ public class Controller {
         for (int i = 0; i < arrLoggedInUsers.size(); i++) {
             User user = arrLoggedInUsers.get(i);
 
-            if (user.getIntRoleID() == 1) {
-                server.sendMessage(msgSys, intUserID);
+            if (user.getIntGetsConfidentialInfo() == 1) {
+                server.sendMessage(msgSys, user.getIntUserID());
             }
         }
 
@@ -125,7 +124,7 @@ public class Controller {
                 pepperDB.insertNewEmployee(strTitle, strFirstName, strLastName, intUserID, intPictureID, intRoleID, intConfidentialInfoID);
 
                 MessageSystem msgSys = new MessageSystem("You have successfully added a new Employee to the database.! Login details are full functional");
-                msgSys.setType(MessageType.Suc_InserUser);
+                msgSys.setType(MessageType.Suc_IUD);
                 server.sendMessage(msgSys);
 
             } else {
@@ -139,11 +138,7 @@ public class Controller {
             err = ex.getMessage();
             err += "";
 
-            MessageSystem msgUnsUser = new MessageSystem("Something went wrong. Please verify everything is completed correctly)");
-            msgUnsUser.setType(MessageType.Unsuc_InserUser);
-            server.sendMessage(msgUnsUser);
-
-            MessageSystem msgSys = new MessageSystem("Something went wrong. Error Message: " + ex.getMessage());
+            MessageSystem msgSys = new MessageSystem("Something went wrong.  Please verify everything is completed correctly! Error Message: " + ex.getMessage());
             msgSys.setType(MessageType.Error);
             server.sendMessage(msgSys);
         }
@@ -177,6 +172,9 @@ public class Controller {
             , strUserName
             , strPassword);
 
+            MessageSystem msgSys = new MessageSystem("Data has been successfully updated! Login details are full functional");
+            msgSys.setType(MessageType.Suc_IUD);
+            server.sendMessage(msgSys);
 
         } catch (Exception ex) {
             String err = "";
@@ -196,6 +194,10 @@ public class Controller {
             int intEmployeeID = msdD.getIntEmployeeID();
             int intPictureID = msdD.getIntPictureID();
 
+            MessageSystem msgSys = new MessageSystem("Data has been successfully deleted");
+            msgSys.setType(MessageType.Suc_IUD);
+            server.sendMessage(msgSys);
+
             pepperDB.deleteEmployeeData(intEmployeeID,intPictureID,intUserID);
         } catch (Exception ex) {
             String err = "";
@@ -214,7 +216,7 @@ public class Controller {
 
 
     public void getUser() {
-        arrAllUser
+        pepperDB.selectAllEmployeeData();
 
 
     }

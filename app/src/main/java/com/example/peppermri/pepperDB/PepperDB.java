@@ -339,11 +339,23 @@ public class PepperDB {
 
     }
 
-    public void selectAllEmployeeData(String strUserName, String strPassword) {
+    public void selectAllEmployeeData() {
 
         SQLiteDatabase db = this.myhelper.getReadableDatabase();
-        Cursor cursorLoginCred = db.rawQuery("Select *" +
-                "    FROM tblEmployee AS E" +
+        Cursor cursorselectAll = db.rawQuery("Select E.intEmployeeID AS intGlobalID" +
+                ", E.strEmployeeTitle AS strTitle" +
+                ", E.strFirstName AS strFirstName" +
+                ", E.strLastName AS strLastName" +
+
+                " , P.intPictureID AS intPictureID" +
+                " , P.strPicture AS strPicture" +
+                " , R.intRoleID AS intRoleID" +
+                " , R.strRole As strRole" +
+                " , U.intUserID AS intUserID" +
+                " , U.strUserName As strUserName" +
+                " , U.strPassword AS strPassword" +
+                " , C.getsConfidentialInfo AS getsConfidentialInfo" +
+                " FROM tblEmployee AS E" +
                 "    INNER JOIN tblUser AS U" +
                 "    ON E.intUserID = U.intUserID" +
                 "    INNER JOIN tblPicture AS P" +
@@ -355,18 +367,30 @@ public class PepperDB {
 
         //ArrayList<User> dbData = new ArrayList<>();
 
-        if (cursorLoginCred.moveToFirst()) {
+        if (cursorselectAll.moveToFirst()) {
             Controller controller = mainActivity.getController();
+            User user;
             do {
-                User user = new User(cursorLoginCred.getInt(6)
-                        , cursorLoginCred.getString(1)
-                        , cursorLoginCred.getString(2)
-                        , cursorLoginCred.getString(3)
-                        , cursorLoginCred.getString(4)
-                        , cursorLoginCred.getInt(5)
+                user = new User(
+                        cursorselectAll.getInt(1)
+                        , cursorselectAll.getString(2)
+                        , cursorselectAll.getString(3)
+                        , cursorselectAll.getString(4)
+
+                        , cursorselectAll.getInt(5)
+                        , cursorselectAll.getString(6)
+
+                        , cursorselectAll.getInt(7)
+                        , cursorselectAll.getString(8)
+
+                        , cursorselectAll.getInt(9)
+                        , cursorselectAll.getString(10)
+                        , cursorselectAll.getString(11)
+
+                        , cursorselectAll.getInt(12)
                 );
                 controller.collectAllUser(user);
-            } while (cursorLoginCred.moveToNext());
+            } while (cursorselectAll.moveToNext());
         }
     }
 
@@ -390,7 +414,8 @@ public class PepperDB {
     public User checkLoginCredential(String strUserName, String strPassword) {
 
         SQLiteDatabase db = this.myhelper.getReadableDatabase();
-        Cursor cursorLoginCred = db.rawQuery("Select E.strEmployeeTitle AS strTitle\n" +
+        /*
+        Cursor cursorLoginCred = db.rawQuery("Select E.strEmployeeTitle AS strTitle " +
                 "    , E.strFirstName AS strFirstName" +
                 "    , E.strLastName AS strLastName" +
                 "    , P.strPicture AS strPicture" +
@@ -404,16 +429,53 @@ public class PepperDB {
                 "    INNER JOIN tblRole AS R" +
                 "    ON E.intRoleID = R.intRoleID " +
                 "    WHERE U.strUserName = " + strUserName + " AND U.strPassword =" + strPassword + ";", null);
+        */
+
+        Cursor cursorLoginCred = db.rawQuery("Select E.intEmployeeID AS intGlobalID" +
+                ", E.strEmployeeTitle AS strTitle" +
+                ", E.strFirstName AS strFirstName" +
+                ", E.strLastName AS strLastName" +
+
+                " , P.intPictureID AS intPictureID" +
+                " , P.strPicture AS strPicture" +
+                " , R.intRoleID AS intRoleID" +
+                " , R.strRole As strRole" +
+                " , U.intUserID AS intUserID" +
+                " , U.strUserName As strUserName" +
+                " , U.strPassword AS strPassword" +
+                " , C.getsConfidentialInfo AS getsConfidentialInfo" +
+                " FROM tblEmployee AS E" +
+                " INNER JOIN tblUser AS U" +
+                " ON E.intUserID = U.intUserID" +
+                " INNER JOIN tblPicture AS P" +
+                " ON E.intPictureID = P.intPictureID" +
+                " INNER JOIN tblRole AS R" +
+                " ON E.intRoleID = R.intRoleID" +
+                " INNER JOIN tblRConfidentialInfo AS C" +
+                " ON E.intRConfidentialInfoID = C.intRConfidentialInfoID" +
+                " WHERE U.strUserName = " + strUserName + " AND U.strPassword =" + strPassword + ";", null);
+
 
         //ArrayList<User> dbData = new ArrayList<>();
 
         if (cursorLoginCred.moveToFirst()) {
-            User user = new User(cursorLoginCred.getInt(6)
-                    , cursorLoginCred.getString(1)
+            User user = new User(
+                    cursorLoginCred.getInt(1)
                     , cursorLoginCred.getString(2)
                     , cursorLoginCred.getString(3)
                     , cursorLoginCred.getString(4)
+
                     , cursorLoginCred.getInt(5)
+                    , cursorLoginCred.getString(6)
+
+                    , cursorLoginCred.getInt(7)
+                    , cursorLoginCred.getString(8)
+
+                    , cursorLoginCred.getInt(9)
+                    , cursorLoginCred.getString(10)
+                    , cursorLoginCred.getString(11)
+
+                    , cursorLoginCred.getInt(12)
             );
             cursorLoginCred.close();
             return user;
@@ -467,10 +529,8 @@ public class PepperDB {
                 ", strINFO VARCHAR(255) NOT NUll );";
         private static final String INSERT_TBL_REC_CONFIDENTIAL_INFO1 = "" +
                 "INSERT INTO tblRConfidentialInfo VALUES(NULL , 1, '1=Receive');";
-        private static final String INSERT_TBL_REC_CONFIDENTIAL_INFO3 = "" +
-                "INSERT INTO tblRConfidentialInfo VALUES(NULL , 2, '2=PriorityReceive');";
         private static final String INSERT_TBL_REC_CONFIDENTIAL_INFO2 = "" +
-                "INSERT INTO tblRConfidentialInfo VALUES(NULL , 0, '0=Not Receive');";
+                "INSERT INTO tblRConfidentialInfo VALUES(NULL , 2, '2=PriorityReceive');";
 
         private static final String CREATE_TABLE_DOCUMENTS =
                 "CREATE TABLE tblDocument" +
@@ -520,7 +580,6 @@ public class PepperDB {
                 db.execSQL(CREATE_TABLE_RECEIVES_CONFIDENTIAL_INFO);
                 db.execSQL(INSERT_TBL_REC_CONFIDENTIAL_INFO1);
                 db.execSQL(INSERT_TBL_REC_CONFIDENTIAL_INFO2);
-                db.execSQL(INSERT_TBL_REC_CONFIDENTIAL_INFO3);
 
                 db.execSQL(CREATE_TABLE_PICTURE);
 
