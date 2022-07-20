@@ -4,15 +4,16 @@ import androidx.databinding.ObservableArrayList;
 import androidx.databinding.ObservableList;
 
 import com.example.peppermri.controller.Controller;
+import com.example.peppermri.messages.MessageRoles;
 import com.example.peppermri.messages.MessageSystem;
+import com.example.peppermri.messages.MessageU;
+import com.example.peppermri.messages.MessageUser;
 import com.example.peppermri.serverclient.ServerClient;
 
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Collection;
-import java.util.Collections;
 
 public class ServerModel {
 
@@ -139,7 +140,7 @@ public class ServerModel {
             ServerClient svClient = srvClient.get(i);
             if(svClient.getName().equals(strName)){
                 svClient.stop();
-                controller.clientDisconnected(svClient.getIntUserId());
+                controller.clientDisconnected(svClient.getIntUserID());
                 srvClient.remove(svClient);
                 i = srvClient.size() +1;
             }
@@ -149,7 +150,7 @@ public class ServerModel {
     public void clearSpecificClient(int intUserID) {
         for (int i = 0; i < srvClient.size(); i++) {
             ServerClient svClient = srvClient.get(i);
-            if(svClient.getIntUserId() == intUserID){
+            if(svClient.getIntUserID() == intUserID){
                 svClient.stop();
                 controller.clientDisconnected(intUserID);
                 srvClient.remove(svClient);
@@ -162,8 +163,27 @@ public class ServerModel {
     public void sendMessage(MessageSystem msgSys, int intUserID){
         for (int i = 0; i < srvClient.size(); i++) {
             ServerClient svClient = srvClient.get(i);
-            if(svClient.getIntUserId() == intUserID){
-                    svClient.send(msgSys);
+            if(svClient.getIntUserID() == intUserID){
+                svClient.send(msgSys);
+                i = srvClient.size() +1;
+            }
+        }
+    }
+    public void sendMessage(MessageUser msgU, int intUserID){
+        for (int i = 0; i < srvClient.size(); i++) {
+            ServerClient svClient = srvClient.get(i);
+            if(svClient.getIntUserID() == intUserID){
+                svClient.send(msgU);
+                i = srvClient.size() +1;
+            }
+        }
+    }
+
+    public void sendMessage(MessageRoles msgR, int intUserID){
+        for (int i = 0; i < srvClient.size(); i++) {
+            ServerClient svClient = srvClient.get(i);
+            if(svClient.getIntUserID() == intUserID){
+                svClient.send(msgR);
                 i = srvClient.size() +1;
             }
         }

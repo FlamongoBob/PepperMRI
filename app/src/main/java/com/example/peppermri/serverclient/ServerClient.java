@@ -27,7 +27,7 @@ public class ServerClient {
     Socket socket;
     Controller controller;
     public String name = "";
-    private int intUserId =-1;
+    private int intUserID = -1;
     public static Logger logger = Logger.getLogger("");
     Thread t;
     User user;
@@ -88,7 +88,7 @@ public class ServerClient {
                                     controller.hasClientJoined = true;
 
                                     user = controller.getNewestUser();
-                                    if(user  != null) {
+                                    if (user != null) {
                                         MessageUser msgU = new MessageUser(user.getIntEmployeeID()
                                                 , e.encrypt(user.getStrTitle())
                                                 , e.encrypt(user.getStrFirstname())
@@ -105,12 +105,15 @@ public class ServerClient {
                                                 , e.encrypt(user.getStrUserName())
                                                 , e.encrypt(user.getStrPassword())
 
+                                                , user.getIntConfidentialID()
                                                 , user.getIntGetsConfidentialInfo()
                                         );
 
-                                        ServerClient.this.intUserId = user.getIntUserID();
+                                        ServerClient.this.intUserID = user.getIntUserID();
 
                                         msgU.send(socket);
+
+                                       controller.prepareRoles(intUserID);
                                     }
 
                                     MessageSystem messageSystem = new MessageSystem(resources.getString(R.string.msg_SucLogin));
@@ -127,12 +130,8 @@ public class ServerClient {
 
                             } else if (msg instanceof MessageSystem) {
                                 if (msg.getType().equals(MessageType.Disconnect)) {
-                                    controller.clientDisconnected(intUserId);
-                                    MessageSystem msgSys = new MessageSystem(resources.getString(R.string.msg_Disconnect));
-                                    msgSys.setType(MessageType.Disconnect);
-                                    msgSys.send(socket);
 
-                                    controller.clientDisconnected(intUserId);
+                                    controller.clientDisconnected(intUserID);
 
                                 } else if (msg.getType().equals(MessageType.Test)) {
                                     MessageSystem msgSys = new MessageSystem(resources.getString(R.string.msg_Test));
@@ -141,27 +140,30 @@ public class ServerClient {
 
                                 } else if (msg.getType().equals(MessageType.LogOut)) {
 
-                                    controller.clientDisconnected(intUserId);
                                     MessageSystem msgSys = new MessageSystem(resources.getString(R.string.msg_Disconnect));
                                     msgSys.setType(MessageType.Disconnect);
                                     msgSys.send(socket);
 
-                                    controller.clientDisconnected(intUserId);
+                                    controller.clientDisconnected(intUserID);
+                                } else if (msg.getType().equals(MessageType.AllUser)) {
 
-                                }else if (msg.getType().equals(MessageType.InsertUser)) {
-
-                                   controller.insertUser((MessageI) msg);
-
-                                }else if (msg.getType().equals(MessageType.UpdateUser)) {
-
-                                    controller.updateUser((MessageU) msg);
-
-                                }else if (msg.getType().equals(MessageType.DeleteUser)) {
-
-                                    controller.deleteUser((MessageD) msg);
+                                    controller.getAllEmployeeData(intUserID);
 
                                 }
+                            } else if (msg instanceof MessageI) {
+
+                                controller.insertUser((MessageI) msg);
+
+                            } else if (msg instanceof MessageU) {
+
+                                controller.updateUser((MessageU) msg);
+
+                            } else if (msg instanceof MessageD) {
+
+                                controller.deleteUser((MessageD) msg);
+
                             }
+
 
                         } catch (Exception ex) {
                             logger.warning(ex.toString());
@@ -234,10 +236,12 @@ public class ServerClient {
     public User getUser() {
         return user;
     }
-    public int getIntUserId(){
-        return intUserId;
+
+    public int getIntUserID() {
+        return intUserID;
     }
-    public String getName(){
+
+    public String getName() {
         return name;
     }
 

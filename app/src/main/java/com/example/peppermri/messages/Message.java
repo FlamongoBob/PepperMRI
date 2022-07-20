@@ -88,6 +88,10 @@ public abstract class Message {
                     message = new MessageSystem(parts[1]);
                     message.setType(MessageType.System);
 
+                } else if (parts[0].equals(MessageType.AllUser.toString())) {
+                    message = new MessageSystem(parts[1]);
+                    message.setType(MessageType.AllUser);
+
                 } else if (parts[0].equals(MessageType.Test.toString())) {
                     message = new MessageSystem(parts[1]);
                     message.setType(MessageType.Test);
@@ -117,7 +121,9 @@ public abstract class Message {
                             , parts[9]
 
                             , Integer.parseInt(parts[10])
+
                             , Integer.parseInt(parts[11])
+                            , Integer.parseInt(parts[12])
                     );
 
                 } else if (parts[0].equals(MessageType.DeleteUser.toString())) {

@@ -19,6 +19,7 @@ public class MessageUser extends Message {
     private String strUserName;
     private String strPassword;
 
+    private int intConfidentialID;
     private int intGetsConfidentialInfo;
 
 
@@ -37,6 +38,7 @@ public class MessageUser extends Message {
             , String strUserName
             , String strPassword
 
+            , int intConfidentialID
             , int intGetsConfidentialInfo) {
 
         super(MessageType.User);
@@ -56,6 +58,7 @@ public class MessageUser extends Message {
         this.strUserName = strUserName;
         this.strPassword = strPassword;
 
+        this.intConfidentialID = intConfidentialID;
         this.intGetsConfidentialInfo = intGetsConfidentialInfo;
 
 
@@ -78,9 +81,61 @@ public class MessageUser extends Message {
 
                 '|' + intUserID +
                 '|' + strUserName +
-                '|' + strPassword
-                +
+                '|' + strPassword +
+
+                '|' + intConfidentialID+
                 '|' + intGetsConfidentialInfo;
     }
 
+    public int getIntEmployeeID() {
+        return intEmployeeID;
+    }
+
+    public String getStrTitle() {
+        return strTitle;
+    }
+
+    public String getStrFirstname() {
+        return strFirstname;
+    }
+
+    public String getStrLastname() {
+        return strLastname;
+    }
+
+    public int getIntPictureID() {
+        return intPictureID;
+    }
+
+    public String getStrPicture() {
+        return strPicture;
+    }
+
+    public int getIntRoleID() {
+        return intRoleID;
+    }
+
+    public String getStrRole() {
+        return strRole;
+    }
+
+    public int getIntUserID() {
+        return intUserID;
+    }
+
+    public String getStrUserName() {
+        return strUserName;
+    }
+
+    public String getStrPassword() {
+        return strPassword;
+    }
+
+    public int getIntGetsConfidentialInfo() {
+        return intGetsConfidentialInfo;
+    }
+
+    public int getIntConfidentialID() {
+        return intConfidentialID;
+    }
 }

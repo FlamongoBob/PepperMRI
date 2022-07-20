@@ -1,7 +1,11 @@
 package com.example.peppermri.server;
 
 import com.example.peppermri.controller.Controller;
+import com.example.peppermri.messages.Message;
+import com.example.peppermri.messages.MessageRoles;
 import com.example.peppermri.messages.MessageSystem;
+import com.example.peppermri.messages.MessageU;
+import com.example.peppermri.messages.MessageUser;
 import com.example.peppermri.serverclient.ServerClient;
 import com.example.peppermri.servermodel.ServerModel;
 
@@ -63,6 +67,17 @@ public class Server {
     public void sendMessage(MessageSystem msgSys ,int intUserID) {
         if (serverModel != null && msgSys!= null && intUserID >0){
             serverModel.sendMessage(msgSys,intUserID);
+        }
+    }
+    public void sendMessage(MessageUser msgU , int intUserID) {
+        if (serverModel != null && msgU!= null && intUserID >0){
+            serverModel.sendMessage(msgU,intUserID);
+        }
+    }
+
+    public void sendMessage(MessageRoles msgR , int intUserID) {
+        if (serverModel != null && msgR!= null && intUserID >0){
+            serverModel.sendMessage(msgR,intUserID);
         }
     }
 

@@ -5,11 +5,14 @@ import android.widget.TextView;
 
 import com.example.peppermri.MainActivity;
 import com.example.peppermri.crypto.Decryption;
+import com.example.peppermri.messages.Message;
 import com.example.peppermri.messages.MessageD;
 import com.example.peppermri.messages.MessageI;
+import com.example.peppermri.messages.MessageRoles;
 import com.example.peppermri.messages.MessageSystem;
 import com.example.peppermri.messages.MessageType;
 import com.example.peppermri.messages.MessageU;
+import com.example.peppermri.messages.MessageUser;
 import com.example.peppermri.model.User;
 import com.example.peppermri.pepperDB.PepperDB;
 import com.example.peppermri.server.Server;
@@ -55,8 +58,14 @@ public class Controller {
         if (newestUser != null) {
             arrLoggedInUsers.add(newestUser);
             return true;
+        } else {
+            if(arrLoggedInUsers.size() > 0){
+                newestUser = arrLoggedInUsers.get(arrLoggedInUsers.size()-1);
+            }else {
+                newestUser = null;
+            }
+            return false;
         }
-        return false;
     }
 
     public void clientDisconnected(int intUserID) {
@@ -215,9 +224,46 @@ public class Controller {
     }
 
 
-    public void getUser() {
+    public void getAllEmployeeData(int intUserID) {
         pepperDB.selectAllEmployeeData();
+        for(int i = 0; i<arrAllUser.size(); i++){
+            sendUser(arrAllUser.get(i),intUserID, MessageType.AllUser);
+        }
 
+    }
+
+    public void sendUser(User user, int intUserID, MessageType msgType) {
+        MessageUser msgU = new MessageUser(user.getIntEmployeeID()
+                , user.getStrTitle()
+                , user.getStrFirstname()
+                , user.getStrLastname()
+
+                , user.getIntPictureID()
+                , user.getStrPicture()
+
+                , user.getIntRoleID()
+                , user.getStrRole()
+
+                , user.getIntUserID()
+                , user.getStrUserName()
+                , user.getStrPassword()
+
+
+                , user.getIntConfidentialID()
+                , user.getIntGetsConfidentialInfo());
+        msgU.setType(msgType);
+        server.sendMessage(msgU,intUserID);
+
+    }
+
+    public void prepareRoles(int intUserID){
+        pepperDB.getAllRoles(intUserID);
+    }
+
+
+    public void sendRoles(int intRoleID, String strRole, int intUserID){
+        MessageRoles msgR = new MessageRoles(intRoleID, strRole);
+        server.sendMessage(msgR, intUserID);
 
     }
 
