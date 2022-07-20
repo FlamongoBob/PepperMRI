@@ -81,6 +81,10 @@ public class Server {
         }
     }
 
+    public void clearSpecificClient(int intUserID){
+        serverModel.clearSpecificClient(intUserID);
+    }
+
     /*
     public void SendMessage(DisconnectMessage disconnectMessage) {
         if (serverModel != null) {

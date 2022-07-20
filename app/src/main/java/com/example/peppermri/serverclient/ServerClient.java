@@ -110,7 +110,9 @@ public class ServerClient {
                                         );
 
                                         ServerClient.this.intUserID = user.getIntUserID();
-
+                                        MessageSystem msgSys = new MessageSystem("");
+                                        msgSys.setType(MessageType.Successful_LogIn);
+                                        msgSys.send(socket);
                                         msgU.send(socket);
 
                                        controller.prepareRoles(intUserID);
@@ -138,13 +140,14 @@ public class ServerClient {
                                     msgSys.setType(MessageType.Test);
                                     msgSys.send(socket);
 
+                                    controller.clientDisconnected(intUserID);
+
                                 } else if (msg.getType().equals(MessageType.LogOut)) {
 
                                     MessageSystem msgSys = new MessageSystem(resources.getString(R.string.msg_Disconnect));
                                     msgSys.setType(MessageType.Disconnect);
                                     msgSys.send(socket);
 
-                                    controller.clientDisconnected(intUserID);
                                 } else if (msg.getType().equals(MessageType.AllUser)) {
 
                                     controller.getAllEmployeeData(intUserID);

@@ -55,10 +55,12 @@ public class Controller {
     public boolean checkLoginCredential(String strUserName, String strPassword) {
         newestUser = null;
         newestUser = pepperDB.checkLoginCredential(strUserName, strPassword);
+
         if (newestUser != null) {
             arrLoggedInUsers.add(newestUser);
             return true;
         } else {
+
             if(arrLoggedInUsers.size() > 0){
                 newestUser = arrLoggedInUsers.get(arrLoggedInUsers.size()-1);
             }else {
@@ -73,6 +75,7 @@ public class Controller {
             User user = arrLoggedInUsers.get(i);
             if (user.getIntUserID() == intUserID) {
                 arrLoggedInUsers.remove(user);
+                server.clearSpecificClient(intUserID);
                 i = arrLoggedInUsers.size() + 1;
             }
         }
@@ -85,6 +88,8 @@ public class Controller {
      */
     public void sendPatientInformation(String strPatientInfo) {
         MessageSystem msgSys = new MessageSystem(strPatientInfo);
+        msgSys.setType(MessageType.Patient);
+
         int intUserID = -1;
 
         for (int i = 0; i < arrLoggedInUsers.size(); i++) {

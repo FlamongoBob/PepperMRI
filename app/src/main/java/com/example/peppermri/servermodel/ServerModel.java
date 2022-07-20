@@ -6,6 +6,7 @@ import androidx.databinding.ObservableList;
 import com.example.peppermri.controller.Controller;
 import com.example.peppermri.messages.MessageRoles;
 import com.example.peppermri.messages.MessageSystem;
+import com.example.peppermri.messages.MessageType;
 import com.example.peppermri.messages.MessageU;
 import com.example.peppermri.messages.MessageUser;
 import com.example.peppermri.serverclient.ServerClient;
@@ -148,11 +149,13 @@ public class ServerModel {
     }
 
     public void clearSpecificClient(int intUserID) {
+        MessageSystem msgSys = new MessageSystem("");
         for (int i = 0; i < srvClient.size(); i++) {
             ServerClient svClient = srvClient.get(i);
             if(svClient.getIntUserID() == intUserID){
+                msgSys.setType(MessageType.LogOut);
+                svClient.send(msgSys);
                 svClient.stop();
-                controller.clientDisconnected(intUserID);
                 srvClient.remove(svClient);
                 i = srvClient.size() +1;
             }

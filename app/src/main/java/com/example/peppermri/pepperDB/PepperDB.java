@@ -137,7 +137,9 @@ public class PepperDB {
         db.execSQL(deleteStatement);
     }
 
-    //TABLE PICTURE
+    /**TABLE PICTURE
+     *
+     */
     public String getStatementInsertTblPicture(String strPicture) {
         return "INSERT INTO tblPicture" +
                 " VALUES(NULL" +
@@ -256,6 +258,9 @@ public class PepperDB {
     }
 
 
+    /**TABLE Employee
+     *
+     */
     public String getStatementInsertTblEmployee(String strTitle
             , String strFirstName
             , String strLastName
