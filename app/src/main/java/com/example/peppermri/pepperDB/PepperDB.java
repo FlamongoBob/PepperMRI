@@ -1,6 +1,5 @@
 package com.example.peppermri.pepperDB;
 
-import android.accessibilityservice.GestureDescription;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -19,69 +18,13 @@ public class PepperDB {
         this.mainActivity = mainActivity;
         myhelper = new myDbHelper(context);
     }
-/*
-    public long insertData(String name, String pass) {
-        SQLiteDatabase dbb = myhelper.getWritableDatabase();
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(myDbHelper.NAME, name);
-        contentValues.put(myDbHelper.MyPASSWORD, pass);
-
-        long id = dbb.insert(myDbHelper.TABLE_NAME, null, contentValues);
-        return id;
-    }*/
-/*
-    @SuppressLint("Range")
-    public String getData() {
-        SQLiteDatabase db = myhelper.getWritableDatabase();
-        String[] columns = {myDbHelper.UID, myDbHelper.NAME, myDbHelper.MyPASSWORD};
-        Cursor cursor = db.query(myDbHelper.TABLE_NAME, columns, null, null, null, null, null);
-        StringBuffer buffer = new StringBuffer();
-        while (cursor.moveToNext()) {
-            try {
-                int cid = 0;
-                if (cursor.getColumnIndex(myDbHelper.UID) > -1) {
-                    cid = cursor.getInt(cursor.getColumnIndex(myDbHelper.UID));
-                }
-                String name = cursor.getString(cursor.getColumnIndex(myDbHelper.NAME));
-                String password = cursor.getString(cursor.getColumnIndex(myDbHelper.MyPASSWORD));
-                buffer.append(cid + "   " + name + "   " + password + " \n");
-
-            } catch (Exception ex) {
-                String err = ex.getMessage();
-                err += "";
-            }
-        }
-        return buffer.toString();
-
-    }
-    */
-/*
-    public int delete(String uname) {
-        SQLiteDatabase db = myhelper.getWritableDatabase();
-        String[] whereArgs = {uname};
-
-        int count = db.delete(myDbHelper.TABLE_NAME, myDbHelper.NAME + " = ?", whereArgs);
-        return count;
-    }
-
- */
-/*
-    public int updateName(String oldName, String newName) {
-        SQLiteDatabase db = myhelper.getWritableDatabase();
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(myDbHelper.NAME, newName);
-        String[] whereArgs = {oldName};
-        int count = db.update(myDbHelper.TABLE_NAME, contentValues, myDbHelper.NAME + " = ?", whereArgs);
-        return count;
-    }
-    */
     //TABLE USER
 
     public String getStatementInsertTblUser(String strUserName, String strPassword) {
         return "INSERT INTO tblUser" +
                 " VALUES(NULL" +
-                ", " + strUserName +
-                ", " + strPassword +
+                ", '" + strUserName + "'" +
+                ", '" + strPassword + "'" +
                 ");";
     }
 
@@ -101,8 +44,8 @@ public class PepperDB {
     public String selectIntUserID(String strUserName, String strPassword) {
         return "SELECT intUserID" +
                 " FROM tblUser" +
-                " WHERE strUserName = " + strUserName +
-                " AND strPassword = " + strPassword + ";";
+                " WHERE strUserName = '" + strUserName + "'" +
+                " AND strPassword = '" + strPassword + "';";
     }
 
     public int insertNewUser(String strUserName, String strPassword) {
@@ -114,7 +57,7 @@ public class PepperDB {
         Cursor cursorUserID = db.rawQuery(selectIntUserID(strUserName, strPassword), null);
 
         if (cursorUserID.moveToFirst()) {
-            intUserID = cursorUserID.getInt(1);
+            intUserID = cursorUserID.getInt(0);
 
             cursorUserID.close();
             return intUserID;
@@ -137,13 +80,13 @@ public class PepperDB {
         db.execSQL(deleteStatement);
     }
 
-    /**TABLE PICTURE
-     *
+    /**
+     * TABLE PICTURE
      */
     public String getStatementInsertTblPicture(String strPicture) {
         return "INSERT INTO tblPicture" +
                 " VALUES(NULL" +
-                ", " + strPicture +
+                ", '" + strPicture + "'" +
                 ");";
     }
 
@@ -162,7 +105,7 @@ public class PepperDB {
     public String selectIntPictureID(String strPicture) {
         return "SELECT intPictureID" +
                 " FROM tblPicture" +
-                " WHERE strPicture = " + strPicture + ";";
+                " WHERE strPicture = '" + strPicture + "';";
     }
 
     public int insertNewPicture(String strPicture) {
@@ -171,12 +114,12 @@ public class PepperDB {
         SQLiteDatabase db = this.myhelper.getWritableDatabase();
         db.execSQL(insertStatement);
         int intPictureID = -1;
-        Cursor cursorUserID = db.rawQuery(selectIntPictureID(strPicture), null);
+        Cursor cursorPicture = db.rawQuery(selectIntPictureID(strPicture), null);
 
-        if (cursorUserID.moveToFirst()) {
-            intPictureID = cursorUserID.getInt(1);
+        if (cursorPicture.moveToFirst()) {
+            intPictureID = cursorPicture.getInt(0);
 
-            cursorUserID.close();
+            cursorPicture.close();
             return intPictureID;
         }
         return intPictureID;
@@ -215,7 +158,7 @@ public class PepperDB {
     public String getStatementSelectRoleID(String strRole) {
         return "SELECT intRoleID" +
                 " FROM tblRole" +
-                " WHERE strRole = " + strRole + ";";
+                " WHERE strRole = '" + strRole + "';";
 
     }
 
@@ -240,26 +183,26 @@ public class PepperDB {
             Controller controller = mainActivity.getController();
             User user;
             do {
-                intRoleID =cursorRole.getInt(1);
-                strRole = cursorRole.getString(2);
+                intRoleID = cursorRole.getInt(0);
+                strRole = cursorRole.getString(1);
 
                 controller.sendRoles(intRoleID, strRole, intUserID);
             } while (cursorRole.moveToNext());
+            cursorRole.close();
         }
     }
-
 
 
     public String insertTBLROLE(String strRoleName) {
         return "INSERT INTO tblRole" +
                 "VALUES(NULL" +
-                ", " + strRoleName +
+                ", '" + strRoleName + "'" +
                 ");";
     }
 
 
-    /**TABLE Employee
-     *
+    /**
+     * TABLE Employee
      */
     public String getStatementInsertTblEmployee(String strTitle
             , String strFirstName
@@ -270,15 +213,14 @@ public class PepperDB {
             , int intConfidentialInfoID) {
 
         return "INSERT INTO tblEmployee" +
-                "VALUES (NULL " +
+                " VALUES (NULL " +
                 ", '" + strTitle + "'" +
                 ", '" + strFirstName + "'" +
                 ", '" + strLastName + "'" +
-                ", '" + intUserID + "'" +
-                ", '" + intPictureID + "'" +
-                ", '" + intRoleID + "'" +
-                ", '" + intConfidentialInfoID + "'" +
-                ");";
+                ", " + intUserID +
+                ", " + intPictureID +
+                ", " + intRoleID +
+                ", " + intConfidentialInfoID + ");";
     }
 
     public String getStatementUpdateTblEmployee(int intEmployeeID
@@ -289,12 +231,12 @@ public class PepperDB {
             , int intConfidentialID) {
 
         return "UPDATE tblEmployee" +
-                "SET" +
-                " strTitle = '" + strTitle + "'" +
+                " SET" +
+                " strEmployeeTitle = '" + strTitle + "'" +
                 ", strFirstName = '" + strFirstName + "'" +
                 ", strLastName = '" + strLastName + "'" +
-                ", intRoleID = " + intRoleID + "" +
-                ", intConfidentialID = '" + intConfidentialID + "'" +
+                ", intRoleID = " + intRoleID +
+                ", intRConfidentialInfoID = '" + intConfidentialID + "'" +
                 " WHERE intEmployeeID = " + intEmployeeID + ";";
     }
 
@@ -409,23 +351,23 @@ public class PepperDB {
             User user;
             do {
                 user = new User(
-                        cursorselectAll.getInt(1)
+                        cursorselectAll.getInt(0)
+                        , cursorselectAll.getString(1)
                         , cursorselectAll.getString(2)
                         , cursorselectAll.getString(3)
-                        , cursorselectAll.getString(4)
 
-                        , cursorselectAll.getInt(5)
-                        , cursorselectAll.getString(6)
+                        , cursorselectAll.getInt(4)
+                        , cursorselectAll.getString(5)
 
-                        , cursorselectAll.getInt(7)
-                        , cursorselectAll.getString(8)
+                        , cursorselectAll.getInt(6)
+                        , cursorselectAll.getString(7)
 
-                        , cursorselectAll.getInt(9)
+                        , cursorselectAll.getInt(8)
+                        , cursorselectAll.getString(9)
                         , cursorselectAll.getString(10)
-                        , cursorselectAll.getString(11)
 
+                        , cursorselectAll.getInt(11)
                         , cursorselectAll.getInt(12)
-                        , cursorselectAll.getInt(13)
                 );
                 controller.collectAllUser(user);
             } while (cursorselectAll.moveToNext());
@@ -440,7 +382,7 @@ public class PepperDB {
         //ArrayList<User> dbData = new ArrayList<>();
 
         if (cursorLoginCred.moveToFirst()) {
-            strCheck += cursorLoginCred.getString(1) + " -||- ";
+            strCheck += cursorLoginCred.getString(0);
 
         }
 
@@ -448,208 +390,298 @@ public class PepperDB {
         return strCheck;
     }
 
-
-    public User checkLoginCredential(String strUserName, String strPassword) {
-
-        SQLiteDatabase db = this.myhelper.getReadableDatabase();
-
-        Cursor cursorLoginCred = db.rawQuery("Select E.intEmployeeID AS intGlobalID" +
+    public String checkLoginString(String strUserName, String strPassword) {
+        return "Select E.intEmployeeID AS intGlobalID" +
                 ", E.strEmployeeTitle AS strTitle" +
                 ", E.strFirstName AS strFirstName" +
                 ", E.strLastName AS strLastName" +
 
                 " , P.intPictureID AS intPictureID" +
                 " , P.strPicture AS strPicture" +
+
                 " , R.intRoleID AS intRoleID" +
                 " , R.strRole As strRole" +
+
                 " , U.intUserID AS intUserID" +
                 " , U.strUserName As strUserName" +
                 " , U.strPassword AS strPassword" +
+
                 " , C.intRConfidentialInfoID AS intRConfidentialInfoID" +
                 " , C.getsConfidentialInfo AS getsConfidentialInfo" +
+
                 " FROM tblEmployee AS E" +
+
                 " INNER JOIN tblUser AS U" +
                 " ON E.intUserID = U.intUserID" +
+
                 " INNER JOIN tblPicture AS P" +
                 " ON E.intPictureID = P.intPictureID" +
+
                 " INNER JOIN tblRole AS R" +
                 " ON E.intRoleID = R.intRoleID" +
+
                 " INNER JOIN tblRConfidentialInfo AS C" +
                 " ON E.intRConfidentialInfoID = C.intRConfidentialInfoID" +
-                " WHERE U.strUserName = " + strUserName + " AND U.strPassword =" + strPassword + ";", null);
 
+                " WHERE U.strUserName = '" + strUserName + "' AND U.strPassword = '" + strPassword + "';";
+    }
+
+    public String checkLoginStringWithoutPicture(String strUserName, String strPassword) {
+        return "Select E.intEmployeeID AS intGlobalID" +
+                ", E.strEmployeeTitle AS strTitle" +
+                ", E.strFirstName AS strFirstName" +
+                ", E.strLastName AS strLastName" +
+
+                " , R.intRoleID AS intRoleID" +
+                " , R.strRole As strRole" +
+
+                " , U.intUserID AS intUserID" +
+                " , U.strUserName As strUserName" +
+                " , U.strPassword AS strPassword" +
+
+                " , C.intRConfidentialInfoID AS intRConfidentialInfoID" +
+                " , C.getsConfidentialInfo AS getsConfidentialInfo" +
+
+                " FROM tblEmployee AS E" +
+
+                " INNER JOIN tblUser AS U" +
+                " ON E.intUserID = U.intUserID" +
+
+                " INNER JOIN tblRole AS R" +
+                " ON E.intRoleID = R.intRoleID" +
+
+                " INNER JOIN tblRConfidentialInfo AS C" +
+                " ON E.intRConfidentialInfoID = C.intRConfidentialInfoID" +
+
+                " WHERE U.strUserName = '" + strUserName + "' AND U.strPassword = '" + strPassword + "';";
+    }
+
+
+    public User checkLoginCredential(String strUserName, String strPassword) {
+
+        SQLiteDatabase db = this.myhelper.getReadableDatabase();
+        Cursor cursorLoginCred = db.rawQuery(checkLoginString(strUserName, strPassword), null);
 
         //ArrayList<User> dbData = new ArrayList<>();
-
+        User user;
         if (cursorLoginCred.moveToFirst()) {
-            User user = new User(
-                    cursorLoginCred.getInt(1)
+            user = new User(
+                    cursorLoginCred.getInt(0)
+                    , cursorLoginCred.getString(1)
                     , cursorLoginCred.getString(2)
                     , cursorLoginCred.getString(3)
-                    , cursorLoginCred.getString(4)
 
-                    , cursorLoginCred.getInt(5)
-                    , cursorLoginCred.getString(6)
+                    , cursorLoginCred.getInt(4)
+                    , cursorLoginCred.getString(5)
 
-                    , cursorLoginCred.getInt(7)
-                    , cursorLoginCred.getString(8)
+                    , cursorLoginCred.getInt(6)
+                    , cursorLoginCred.getString(7)
 
-                    , cursorLoginCred.getInt(9)
+                    , cursorLoginCred.getInt(8)
+                    , cursorLoginCred.getString(9)
                     , cursorLoginCred.getString(10)
-                    , cursorLoginCred.getString(11)
 
+                    , cursorLoginCred.getInt(11)
                     , cursorLoginCred.getInt(12)
-                    , cursorLoginCred.getInt(13)
             );
             cursorLoginCred.close();
             return user;
+
+        } else {
+            String strLogin = checkLoginStringWithoutPicture(strUserName, strPassword);
+            cursorLoginCred = db.rawQuery(strLogin, null);
+
+            if (cursorLoginCred.moveToFirst()) {
+
+                user = new User(
+                        cursorLoginCred.getInt(0)
+                        , cursorLoginCred.getString(1)
+                        , cursorLoginCred.getString(2)
+                        , cursorLoginCred.getString(3)
+
+                        , -1
+                        , ""
+
+                        , cursorLoginCred.getInt(4)
+                        , cursorLoginCred.getString(5)
+
+                        , cursorLoginCred.getInt(6)
+                        , cursorLoginCred.getString(7)
+                        , cursorLoginCred.getString(8)
+
+                        , cursorLoginCred.getInt(9)
+                        , cursorLoginCred.getInt(10)
+                );
+
+                cursorLoginCred.close();
+                return user;
+            }
+
+            cursorLoginCred.close();
+            return null;
         }
-        return null;
+
     }
 
 
-static class myDbHelper extends SQLiteOpenHelper {
-    private static final String DATABASE_NAME = "Pepper_MRI_DB";    // Database Name
-    private static final String TABLE_NAME = "myTable";   // Table Name
-    private static final int DATABASE_Version = 2;    // Database Version
+    static class myDbHelper extends SQLiteOpenHelper {
+        private static final String DATABASE_NAME = "Pepper_MRI_DB";    // Database Name
+        private static final String TABLE_NAME = "myTable";   // Table Name
+        private static final int DATABASE_Version = 2;    // Database Version
 
-    private static final String CREATE_TABLE_EMPLOYEE =
-            "CREATE TABLE tblEmployee" +
-                    " (intEmployeeID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT" +
-                    ", strEmployeeTitle VARCHAR(255) " +
-                    ", strFirstName  VARCHAR(225) NOT NULL" +
-                    ", strLastName  VARCHAR(225) NOT NULL" +
-                    ", intUserID  INTEGER NOT NULL" +
-                    ", intPictureID  INTEGER" +
-                    ", intRoleID  INTEGER NOT NULL" +
-                    ", intRConfidentialInfoID  INTEGER NOT NULL" +
-                    ", FOREIGN KEY (intUserID) REFERENCES tblUser(intUserID)" +
-                    ", FOREIGN KEY (intPictureID) REFERENCES tblPicture(intPictureID)" +
-                    ", FOREIGN KEY (intRoleID) REFERENCES tblRole(intRoleID)" +
-                    ", FOREIGN KEY (intRConfidentialInfoID) REFERENCES tblReceivesConfidentialInfo(intRConfidentialInfoID)" +
-                    ");";
+        private static final String CREATE_TABLE_EMPLOYEE =
+                "CREATE TABLE tblEmployee" +
+                        " (intEmployeeID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT" +
+                        ", strEmployeeTitle VARCHAR(255) " +
+                        ", strFirstName  VARCHAR(225) NOT NULL" +
+                        ", strLastName  VARCHAR(225) NOT NULL" +
+                        ", intUserID  INTEGER NOT NULL" +
+                        ", intPictureID  INTEGER" +
+                        ", intRoleID  INTEGER NOT NULL" +
+                        ", intRConfidentialInfoID  INTEGER NOT NULL" +
+                        ", FOREIGN KEY (intUserID) REFERENCES tblUser(intUserID)" +
+                        ", FOREIGN KEY (intPictureID) REFERENCES tblPicture(intPictureID)" +
+                        ", FOREIGN KEY (intRoleID) REFERENCES tblRole(intRoleID)" +
+                        ", FOREIGN KEY (intRConfidentialInfoID) REFERENCES tblReceivesConfidentialInfo(intRConfidentialInfoID)" +
+                        ");";
 
-    private static final String CREATE_TABLE_USER = "CREATE TABLE tblUser" +
-            " (intUserID INTEGER NOT NUll PRIMARY KEY AUTOINCREMENT" +
-            ", strUserName VARCHAR(255) NOT NUll " +
-            ", strPassword  VARCHAR(225) NOT NUll );";
+        public static final String insertAdminEmployee = "INSERT INTO tblEmployee" +
+                " VALUES ( NULL " +
+                ", 'Dr. Med. ADMIM'" +
+                ", 'ADMIN'" +
+                ", 'ADMIN'" +
+                ", '1'" +
+                ", 1" +
+                ", 1" +
+                ", '1'" +
+                ");";
 
-    private static final String INSERT_TBL_USER = "INSERT INTO tblUser VALUES(NULL , 'ADMIN','ADMIN');";
+        public static final String insertAdminPic = "INSERT INTO tblPicture" +
+                " VALUES ( NULL" +
+                ", 'NoPicture' );";
 
-    private static final String CREATE_TABLE_PICTURE = "CREATE TABLE tblPicture" +
-            " (intPictureID INTEGER NOT NUll PRIMARY KEY AUTOINCREMENT" +
-            ", strPicture VARCHAR(255) NOT NUll );";
+        private static final String CREATE_TABLE_USER = "CREATE TABLE tblUser" +
+                " (intUserID INTEGER NOT NUll PRIMARY KEY AUTOINCREMENT" +
+                ", strUserName VARCHAR(255) NOT NUll " +
+                ", strPassword  VARCHAR(225) NOT NUll );";
 
-    private static final String CREATE_TABLE_ROLE = "CREATE TABLE tblRole" +
-            " (intRoleID INTEGER NOT NUll PRIMARY KEY AUTOINCREMENT" +
-            ", strRole VARCHAR(255) NOT NUll );";
+        private static final String INSERT_TBL_USER = "INSERT INTO tblUser VALUES(NULL , 'ADMIN','ADMIN');";
 
-    private static final String INSERT_TBL_ROLE1 = "INSERT INTO tblRole VALUES(NULL, 'Admin');";
-    private static final String INSERT_TBL_ROLE2 = "INSERT INTO tblRole VALUES(NULL , 'User');";
+        private static final String CREATE_TABLE_PICTURE = "CREATE TABLE tblPicture" +
+                " (intPictureID INTEGER NOT NUll PRIMARY KEY AUTOINCREMENT" +
+                ", strPicture VARCHAR(255) NOT NUll );";
 
-    private static final String CREATE_TABLE_RECEIVES_CONFIDENTIAL_INFO = "CREATE TABLE tblRConfidentialInfo" +
-            " (intRConfidentialInfoID INTEGER NOT NUll PRIMARY KEY AUTOINCREMENT" +
-            ", getsConfidentialInfo BIT NOT NUll " +
-            ", strINFO VARCHAR(255) NOT NUll );";
+        private static final String CREATE_TABLE_ROLE = "CREATE TABLE tblRole" +
+                " (intRoleID INTEGER NOT NUll PRIMARY KEY AUTOINCREMENT" +
+                ", strRole VARCHAR(255) NOT NUll );";
 
-    private static final String INSERT_TBL_REC_CONFIDENTIAL_INFO1 = "" +
-            "INSERT INTO tblRConfidentialInfo VALUES(NULL , 1, '1 = Receive');";
-    private static final String INSERT_TBL_REC_CONFIDENTIAL_INFO2 = "" +
-            "INSERT INTO tblRConfidentialInfo VALUES(NULL , 0, '0 = Not Receive');";
+        private static final String INSERT_TBL_ROLE1 = "INSERT INTO tblRole VALUES(NULL, 'Admin');";
+        private static final String INSERT_TBL_ROLE2 = "INSERT INTO tblRole VALUES(NULL , 'User');";
 
-    private static final String CREATE_TABLE_DOCUMENTS =
-            "CREATE TABLE tblDocument" +
-                    " (intDocumentID INTEGER PRIMARY KEY AUTOINCREMENT" +
-                    ", strDocumentName VARCHAR(255) NOT NUll " +
-                    ", strPath  VARCHAR(225) NOT NUll" +
-                    ", intTypeID  INTEGER NOT NUll" +
-                    ", intLanguageID  INTEGER NOT NUll" +
-                    ", FOREIGN KEY (intTypeID) REFERENCES tblType(intTypeID)" +
-                    ", FOREIGN KEY (intLanguageID) REFERENCES tblLanguage(intLanguageID));";
+        private static final String CREATE_TABLE_RECEIVES_CONFIDENTIAL_INFO = "CREATE TABLE tblRConfidentialInfo" +
+                " (intRConfidentialInfoID INTEGER NOT NUll PRIMARY KEY AUTOINCREMENT" +
+                ", getsConfidentialInfo BIT NOT NUll " +
+                ", strINFO VARCHAR(255) NOT NUll );";
 
-    private static final String CREATE_TABLE_LANGUAGE = "CREATE TABLE tblLanguage" +
-            " (intLanguageID INTEGER PRIMARY KEY AUTOINCREMENT" +
-            ", strLanguage VARCHAR(255) );";
+        private static final String INSERT_TBL_REC_CONFIDENTIAL_INFO1 = "" +
+                "INSERT INTO tblRConfidentialInfo VALUES(NULL , 1, '1 = Receive');";
+        private static final String INSERT_TBL_REC_CONFIDENTIAL_INFO2 = "" +
+                "INSERT INTO tblRConfidentialInfo VALUES(NULL , 0, '0 = Not Receive');";
 
-    private static final String CREATE_TABLE_TYPE = "CREATE TABLE tblType" +
-            " (intTypeID INTEGER PRIMARY KEY AUTOINCREMENT" +
-            ", strType VARCHAR(255) );";
+        private static final String CREATE_TABLE_DOCUMENTS =
+                "CREATE TABLE tblDocument" +
+                        " (intDocumentID INTEGER PRIMARY KEY AUTOINCREMENT" +
+                        ", strDocumentName VARCHAR(255) NOT NUll " +
+                        ", strPath  VARCHAR(225) NOT NUll" +
+                        ", intTypeID  INTEGER NOT NUll" +
+                        ", intLanguageID  INTEGER NOT NUll" +
+                        ", FOREIGN KEY (intTypeID) REFERENCES tblType(intTypeID)" +
+                        ", FOREIGN KEY (intLanguageID) REFERENCES tblLanguage(intLanguageID));";
 
+        private static final String CREATE_TABLE_LANGUAGE = "CREATE TABLE tblLanguage" +
+                " (intLanguageID INTEGER PRIMARY KEY AUTOINCREMENT" +
+                ", strLanguage VARCHAR(255) );";
 
-    private static final String DROP_TABLE = "DROP TABLE IF EXISTS  tblDocument";
-    private static final String DROP_TABLE1 = "DROP TABLE IF EXISTS  tblLanguage";
-    private static final String DROP_TABLE2 = "DROP TABLE IF EXISTS  tblType";
-    private static final String DROP_TABLE3 = "DROP TABLE IF EXISTS  tblUser";
-    private static final String DROP_TABLE4 = "DROP TABLE IF EXISTS  tblRole";
-    private static final String DROP_TABLE5 = "DROP TABLE IF EXISTS  tblEmployee";
-    private static final String DROP_TABLE6 = "DROP TABLE IF EXISTS  tblPicture";
-    private static final String DROP_TABLE7 = "DROP TABLE IF EXISTS  tblConfidentialInfo";
-
-    private Context context;
+        private static final String CREATE_TABLE_TYPE = "CREATE TABLE tblType" +
+                " (intTypeID INTEGER PRIMARY KEY AUTOINCREMENT" +
+                ", strType VARCHAR(255) );";
 
 
-    public myDbHelper(Context context) {
-        super(context, DATABASE_NAME, null, DATABASE_Version);
-        this.context = context;
-    }
+        private static final String DROP_TABLE = "DROP TABLE IF EXISTS  tblDocument";
+        private static final String DROP_TABLE1 = "DROP TABLE IF EXISTS  tblLanguage";
+        private static final String DROP_TABLE2 = "DROP TABLE IF EXISTS  tblType";
+        private static final String DROP_TABLE3 = "DROP TABLE IF EXISTS  tblUser";
+        private static final String DROP_TABLE4 = "DROP TABLE IF EXISTS  tblRole";
+        private static final String DROP_TABLE5 = "DROP TABLE IF EXISTS  tblEmployee";
+        private static final String DROP_TABLE6 = "DROP TABLE IF EXISTS  tblPicture";
+        private static final String DROP_TABLE7 = "DROP TABLE IF EXISTS  tblConfidentialInfo";
 
-    @Override
-    public void onCreate(SQLiteDatabase db) {
+        private Context context;
 
-        try {
-            Toast.makeText(context, "onCreate", Toast.LENGTH_SHORT).show();
-            //USER RELATED
-            db.execSQL(CREATE_TABLE_USER);
-            db.execSQL(INSERT_TBL_USER);
 
-            db.execSQL(CREATE_TABLE_RECEIVES_CONFIDENTIAL_INFO);
-            db.execSQL(INSERT_TBL_REC_CONFIDENTIAL_INFO1);
-            db.execSQL(INSERT_TBL_REC_CONFIDENTIAL_INFO2);
+        public myDbHelper(Context context) {
+            super(context, DATABASE_NAME, null, DATABASE_Version);
+            this.context = context;
+        }
 
-            db.execSQL(CREATE_TABLE_PICTURE);
+        @Override
+        public void onCreate(SQLiteDatabase db) {
 
-            db.execSQL(CREATE_TABLE_ROLE);
-            db.execSQL(INSERT_TBL_ROLE1);
-            db.execSQL(INSERT_TBL_ROLE2);
+            try {
+                //USER RELATED
+                db.execSQL(CREATE_TABLE_USER);
+                db.execSQL(INSERT_TBL_USER);
 
-            db.execSQL(CREATE_TABLE_EMPLOYEE);
+                db.execSQL(CREATE_TABLE_RECEIVES_CONFIDENTIAL_INFO);
+                db.execSQL(INSERT_TBL_REC_CONFIDENTIAL_INFO1);
+                db.execSQL(INSERT_TBL_REC_CONFIDENTIAL_INFO2);
 
-            //DOCUMENTS RELATED
-            db.execSQL(CREATE_TABLE_LANGUAGE);
-            db.execSQL(CREATE_TABLE_TYPE);
-            db.execSQL(CREATE_TABLE_DOCUMENTS);
+                db.execSQL(CREATE_TABLE_PICTURE);
+                db.execSQL(insertAdminPic);
 
-        } catch (Exception ex) {
-            String err = "";
-            err = ex.getMessage();
-            err += "";
+                db.execSQL(CREATE_TABLE_ROLE);
+                db.execSQL(INSERT_TBL_ROLE1);
+                db.execSQL(INSERT_TBL_ROLE2);
 
-            Toast.makeText(context, "onCreate  ER: " + ex.getMessage(), Toast.LENGTH_SHORT).show();
+                db.execSQL(CREATE_TABLE_EMPLOYEE);
+                db.execSQL(insertAdminEmployee);
+
+                //DOCUMENTS RELATED
+                db.execSQL(CREATE_TABLE_LANGUAGE);
+                db.execSQL(CREATE_TABLE_TYPE);
+                db.execSQL(CREATE_TABLE_DOCUMENTS);
+
+            } catch (Exception ex) {
+                String err = "";
+                err = ex.getMessage();
+                err += "";
+
+                //Toast.makeText(context, "onCreate  ER: " + ex.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        @Override
+        public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+            try {
+                //Message.message(context, "OnUpgrade");
+                Toast.makeText(context, "OnUpgrade", Toast.LENGTH_SHORT).show();
+                db.execSQL(DROP_TABLE);
+                db.execSQL(DROP_TABLE1);
+                db.execSQL(DROP_TABLE2);
+                db.execSQL(DROP_TABLE3);
+                db.execSQL(DROP_TABLE4);
+                db.execSQL(DROP_TABLE5);
+                db.execSQL(DROP_TABLE6);
+                db.execSQL(DROP_TABLE7);
+                onCreate(db);
+            } catch (Exception ex) {
+                String err = "";
+                err = ex.getMessage();
+                err += "";
+
+                Toast.makeText(context, "OnUpgrade  ER: " + ex.getMessage(), Toast.LENGTH_SHORT).show();
+            }
         }
     }
-
-    @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        try {
-            //Message.message(context, "OnUpgrade");
-            Toast.makeText(context, "OnUpgrade", Toast.LENGTH_SHORT).show();
-            db.execSQL(DROP_TABLE);
-            db.execSQL(DROP_TABLE1);
-            db.execSQL(DROP_TABLE2);
-            db.execSQL(DROP_TABLE3);
-            db.execSQL(DROP_TABLE4);
-            db.execSQL(DROP_TABLE5);
-            db.execSQL(DROP_TABLE6);
-            db.execSQL(DROP_TABLE7);
-            onCreate(db);
-        } catch (Exception ex) {
-            String err = "";
-            err = ex.getMessage();
-            err += "";
-
-            Toast.makeText(context, "OnUpgrade  ER: " + ex.getMessage(), Toast.LENGTH_SHORT).show();
-        }
-    }
-}
 }
 

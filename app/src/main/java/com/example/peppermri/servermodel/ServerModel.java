@@ -57,8 +57,9 @@ public class ServerModel {
         Runnable r;
         try {
             listener = new ServerSocket(intPort, 10, inetAddress);
+           // listener = new ServerSocket(intPort);
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             String err = e.getMessage();
             err += "";
         }
@@ -91,9 +92,9 @@ public class ServerModel {
                         Socket socket = listener.accept();
                         svClient = new ServerClient(ServerModel.this, socket, controller);
                         srvClient.add(svClient);
-                        if (srvClient.size() >= 1 && !listener.isClosed()) {
-                            closeListener();
-                        }
+                       // if (srvClient.size() >= 1 && !listener.isClosed()) {
+                        //    closeListener();
+                       // }
                     } catch (Exception e) {
                         String err = e.getMessage();
                         err += "";

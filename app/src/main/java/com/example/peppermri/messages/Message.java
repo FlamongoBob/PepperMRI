@@ -16,25 +16,25 @@ import javax.crypto.NoSuchPaddingException;
 public abstract class Message {
     protected MessageType type;
     private boolean value;
-    private static Encryption encryption;
-    private static Decryption decryption;
+
+    private static BufferedReader bfr;
+    private static OutputStreamWriter out;
+
     public Message(MessageType type) {
         this.type = type;
-
-        encryption = new Encryption();
-        decryption = new Decryption();
     }
 
     /**
      * Creates and outputstream to send the message from the sender to the receiver
+     *
      * @param socket
      */
     public void send(Socket socket) {
-        OutputStreamWriter out;
         try {
-            String strEncryptedMessage;
-            out = new OutputStreamWriter(socket.getOutputStream());
-            strEncryptedMessage =encryption.encrypt(this.toString());
+            if(out == null){
+
+                out = new OutputStreamWriter(socket.getOutputStream());
+            }
             out.write(this.toString() + "\n");
             out.flush();
         } catch (IOException e) {
@@ -45,25 +45,33 @@ public abstract class Message {
     /**
      * The reader get all incoming messages and splits them into parts, to figure out what message types was sent to
      * the receiver, and splits the other parts of the message, for further usage of the receiving program
+     *
      * @param socket
      * @return
      */
     public static Message receive(Socket socket) {
-        BufferedReader bfr;
         Message message = null;
         try {
-            bfr = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            if(bfr == null) {
+                bfr = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            }
             String msgText = bfr.readLine(); // Will wait here for complete line
             if (msgText != null) {
 
-                String strDecryptedMessage = decryption.decrypt(msgText);
+                //String strDecryptedMessage = decryption.decrypt(msgText);
 
                 // Parse message
-                String[] parts = strDecryptedMessage.split("\\|");
+                String[] parts = msgText.split("\\|");
 
                 if (parts[0].equals(MessageType.Disconnect.toString())) {
                     message = new MessageSystem(parts[1]);
                     message.setType(MessageType.Disconnect);
+
+                } else if (parts[0].equals(MessageType.Login.toString())) {
+                    message = new MessageLogin(parts[1]
+                            , parts[2]
+                            , MessageType.Login);
+                    message.setType(MessageType.Login);
 
                 } else if (parts[0].equals(MessageType.Unsuccessful_LogIn.toString())) {
                     message = new MessageSystem(parts[1]);
@@ -73,7 +81,7 @@ public abstract class Message {
                     message = new MessageSystem(parts[1]);
                     message.setType(MessageType.Successful_LogIn);
 
-                }else if (parts[0].equals(MessageType.LogOut.toString())) {
+                } else if (parts[0].equals(MessageType.LogOut.toString())) {
                     message.setType(MessageType.LogOut);
 
                 } else if (parts[0].equals(MessageType.Disconnect.toString())) {
@@ -89,15 +97,15 @@ public abstract class Message {
                     message.setType(MessageType.System);
 
                 } else if (parts[0].equals(MessageType.AllUser.toString())) {
-                    message = new MessageSystem(parts[1]);
+                    message = new MessageSystem("");
                     message.setType(MessageType.AllUser);
 
                 } else if (parts[0].equals(MessageType.Test.toString())) {
-                    message = new MessageSystem(parts[1]);
+                    message = new MessageSystem("");
                     message.setType(MessageType.Test);
 
                 } else if (parts[0].equals(MessageType.InsertUser.toString())) {
-                    message = new MessageI( parts[1]
+                    message = new MessageI(parts[1]
                             , parts[2]
                             , parts[3]
                             , parts[4]
@@ -137,11 +145,7 @@ public abstract class Message {
         } catch (IOException e) {
             String err = e.getMessage();
             //Controller.ClientIsConnected.set(false);
-           // Controller.ServerIsStarted.set(false);
-        } catch (NoSuchPaddingException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            // Controller.ServerIsStarted.set(false);
         }
         return message;
     }
@@ -152,7 +156,8 @@ public abstract class Message {
     public MessageType getType() {
         return this.type;
     }
-    public void setType(MessageType msgType){
+
+    public void setType(MessageType msgType) {
         this.type = msgType;
     }
 

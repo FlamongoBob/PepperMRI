@@ -5,6 +5,7 @@ import android.widget.TextView;
 
 import com.example.peppermri.MainActivity;
 import com.example.peppermri.crypto.Decryption;
+import com.example.peppermri.crypto.Encryption;
 import com.example.peppermri.messages.Message;
 import com.example.peppermri.messages.MessageD;
 import com.example.peppermri.messages.MessageI;
@@ -30,9 +31,10 @@ public class Controller {
     private ArrayList<User> arrLoggedInUsers = new ArrayList<>();
     PepperDB pepperDB;
     MainActivity mainActivity;
-    final private int intPortNr = 10284;
-    final private String strIPAdress = "127.10.10.15";
+    final private int intPortNr = 9999;//80; //= 10284;
+    final private String strIPAdress="10.0.2.15";// = "127.10.10.15";
     private ArrayList<User> arrAllUser = new ArrayList<>();
+    Encryption e = new Encryption();
 
     public Controller(PepperDB pepperDB, MainActivity mainActivity) {
         this.mainActivity = mainActivity;
@@ -127,7 +129,15 @@ public class Controller {
             int intUserID = pepperDB.insertNewUser(strUsername, strPassword);
             int intPictureID = -1;
             if (intUserID > 0) {
-                if (!strPicture.isEmpty()) {
+                if (!strPicture.isEmpty() && !strPicture.equals("NoPicture")) {
+                    intPictureID = pepperDB.insertNewPicture(strPicture);
+
+                    if (intPictureID < 0) {
+                        MessageSystem msgSys = new MessageSystem("Something went wrong on the insert into tblPicture on the Server Database");
+                        server.sendMessage(msgSys);
+                    }
+                }else {
+                    strPicture = strPicture +"-"+e.encrypt(strFirstName) +"-"+ e.encrypt(strLastName);
                     intPictureID = pepperDB.insertNewPicture(strPicture);
 
                     if (intPictureID < 0) {

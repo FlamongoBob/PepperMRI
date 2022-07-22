@@ -83,11 +83,18 @@ public class ServerClient {
                                 );
 
                                 if (isCorrect) {
-                                    ServerClient.this.name = d.decrypt(((MessageLogin) msg).getName());
+                                    ServerClient.this.name = d.decrypt(
+                                                    ((MessageLogin) msg).getName()
+                                );
 
                                     controller.hasClientJoined = true;
 
                                     user = controller.getNewestUser();
+
+                                    MessageSystem messageSystem = new MessageSystem("You have successfully Connected to Pepper!");
+                                    messageSystem.setType(MessageType.Successful_LogIn);
+                                    messageSystem.send(socket);
+
                                     if (user != null) {
                                         MessageUser msgU = new MessageUser(user.getIntEmployeeID()
                                                 , e.encrypt(user.getStrTitle())
@@ -110,17 +117,11 @@ public class ServerClient {
                                         );
 
                                         ServerClient.this.intUserID = user.getIntUserID();
-                                        MessageSystem msgSys = new MessageSystem("");
-                                        msgSys.setType(MessageType.Successful_LogIn);
-                                        msgSys.send(socket);
+
                                         msgU.send(socket);
 
                                        controller.prepareRoles(intUserID);
                                     }
-
-                                    MessageSystem messageSystem = new MessageSystem(resources.getString(R.string.msg_SucLogin));
-                                    messageSystem.setType(MessageType.Successful_LogIn);
-                                    messageSystem.send(socket);
 
                                 } else {
                                     MessageSystem messageSystem = new MessageSystem(resources.getString(R.string.msg_UnSucLogin));
@@ -169,8 +170,10 @@ public class ServerClient {
 
 
                         } catch (Exception ex) {
+                            String err ="";
+                            err =ex.getMessage();
+                            err+="";
                             logger.warning(ex.toString());
-                            break;
                         }
                     }
 
