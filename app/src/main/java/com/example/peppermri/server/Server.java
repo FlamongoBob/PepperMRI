@@ -1,5 +1,6 @@
 package com.example.peppermri.server;
 
+import com.example.peppermri.MainActivity;
 import com.example.peppermri.controller.Controller;
 import com.example.peppermri.messages.Message;
 import com.example.peppermri.messages.MessageRoles;
@@ -16,6 +17,7 @@ public class Server {
     boolean isStarted = false;
     ServerModel serverModel;
 
+
     /**
      * Constructor for the "Server" class, creating a new ServerModel at the same time passing the variables needed for
      * constuction, as well as sending the conrtoller, to be able to reach function in the controller class.
@@ -24,11 +26,11 @@ public class Server {
      * @param controller
      * @param inetAddress
      */
-    public Server(int port, Controller controller, InetAddress inetAddress) {
+    public Server(int port, Controller controller, InetAddress inetAddress, MainActivity mainActivity) {
         try {
             if (!isStarted) {
                 //new
-                serverModel = new ServerModel(controller, port, inetAddress);
+                serverModel = new ServerModel(controller, port, inetAddress, mainActivity);
 
                 isStarted = true;
 

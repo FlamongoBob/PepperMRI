@@ -46,7 +46,7 @@ public class Controller {
         try {
 
             InetAddress inetAddress = InetAddress.getByName(strIPAdress);
-            server = new Server(this.intPortNr, this, inetAddress);
+            server = new Server(this.intPortNr, this, inetAddress,mainActivity);
 
         } catch (Exception ex) {
             String err = ex.getMessage();
@@ -104,8 +104,12 @@ public class Controller {
 
     }
     public void check(TextView tv ){
-        TextView tv2 = tv ;
-         tv2.setText(pepperDB.Check());
+        //TextView tv2 = tv ;
+         ///tv2.setText(pepperDB.Check());
+
+        MessageSystem msgSys = new MessageSystem("");
+        msgSys.setType(MessageType.Test);
+        server.sendMessage(msgSys);
 
     }
 

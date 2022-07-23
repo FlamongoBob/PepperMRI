@@ -3,6 +3,7 @@ package com.example.peppermri.serverclient;
 
 import android.content.res.Resources;
 
+import com.example.peppermri.MainActivity;
 import com.example.peppermri.R;
 import com.example.peppermri.controller.Controller;
 import com.example.peppermri.crypto.Decryption;
@@ -34,7 +35,7 @@ public class ServerClient {
     Encryption e = new Encryption();
     Decryption d = new Decryption();
 
-    Resources resources = Resources.getSystem();
+    MainActivity mainActivity;
 
     /**
      * Constructor for the ServerClient class, that receive parameter to set global variable, so other classes
@@ -45,11 +46,11 @@ public class ServerClient {
      * @param socket
      * @param controller
      */
-    public ServerClient(ServerModel serverModel, Socket socket, Controller controller) {
+    public ServerClient(ServerModel serverModel, Socket socket, Controller controller, MainActivity mainActivity) {
         this.serverModel = serverModel;
         this.socket = socket;
         this.controller = controller;
-
+        this.mainActivity = mainActivity;
         Runnable r = messageThread();
         t = new Thread(r);
         startThread();
@@ -84,8 +85,8 @@ public class ServerClient {
 
                                 if (isCorrect) {
                                     ServerClient.this.name = d.decrypt(
-                                                    ((MessageLogin) msg).getName()
-                                );
+                                            ((MessageLogin) msg).getName()
+                                    );
 
                                     controller.hasClientJoined = true;
 
@@ -120,11 +121,11 @@ public class ServerClient {
 
                                         msgU.send(socket);
 
-                                       controller.prepareRoles(intUserID);
+                                        controller.prepareRoles(intUserID);
                                     }
 
                                 } else {
-                                    MessageSystem messageSystem = new MessageSystem(resources.getString(R.string.msg_UnSucLogin));
+                                    MessageSystem messageSystem = new MessageSystem(mainActivity.getString(R.string.msg_UnSucLogin));
                                     messageSystem.setType(MessageType.Unsuccessful_LogIn);
                                     messageSystem.send(socket);
                                     serverModel.clearSpecificClient(ServerClient.this.name);
@@ -137,7 +138,7 @@ public class ServerClient {
                                     controller.clientDisconnected(intUserID);
 
                                 } else if (msg.getType().equals(MessageType.Test)) {
-                                    MessageSystem msgSys = new MessageSystem(resources.getString(R.string.msg_Test));
+                                    MessageSystem msgSys = new MessageSystem(mainActivity.getString(R.string.msg_Test));
                                     msgSys.setType(MessageType.Test);
                                     msgSys.send(socket);
 
@@ -145,11 +146,11 @@ public class ServerClient {
 
                                 } else if (msg.getType().equals(MessageType.LogOut)) {
 
-                                    MessageSystem msgSys = new MessageSystem(resources.getString(R.string.msg_Disconnect));
+                                    MessageSystem msgSys = new MessageSystem(mainActivity.getString(R.string.msg_Disconnect));
                                     msgSys.setType(MessageType.Disconnect);
                                     msgSys.send(socket);
 
-                                } else if (msg.getType().equals(MessageType.AllUser)) {
+                                } else if (msg.getType().equals(MessageType.AllUser )) {
 
                                     controller.getAllEmployeeData(intUserID);
 
@@ -170,9 +171,9 @@ public class ServerClient {
 
 
                         } catch (Exception ex) {
-                            String err ="";
-                            err =ex.getMessage();
-                            err+="";
+                            String err = "";
+                            err = ex.getMessage();
+                            err += "";
                             logger.warning(ex.toString());
                         }
                     }

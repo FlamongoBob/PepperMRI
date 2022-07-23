@@ -3,6 +3,7 @@ package com.example.peppermri.servermodel;
 import androidx.databinding.ObservableArrayList;
 import androidx.databinding.ObservableList;
 
+import com.example.peppermri.MainActivity;
 import com.example.peppermri.controller.Controller;
 import com.example.peppermri.messages.MessageRoles;
 import com.example.peppermri.messages.MessageSystem;
@@ -26,6 +27,7 @@ public class ServerModel {
     private InetAddress inetAddress;
     Thread t;
 
+    MainActivity mainActivity;
     public ObservableList<ServerClient> srvClient = new ObservableArrayList<>();
 
     /**
@@ -36,10 +38,11 @@ public class ServerModel {
      * @param intPort
      * @param inetAddress
      */
-    public ServerModel(Controller controller, int intPort, InetAddress inetAddress) {
+    public ServerModel(Controller controller, int intPort, InetAddress inetAddress, MainActivity mainActivity) {
         this.controller = controller;
         this.intPort = intPort;
         this.inetAddress = inetAddress;
+        this.mainActivity = mainActivity;
         Runnable r = prepareServer();//prepareServer(intPort, inetAddress);
 
         t = new Thread(r, "ServerSocket");
@@ -90,7 +93,7 @@ public class ServerModel {
                 while (srvClient.size() < 1) {//!isStopped) {
                     try {
                         Socket socket = listener.accept();
-                        svClient = new ServerClient(ServerModel.this, socket, controller);
+                        svClient = new ServerClient(ServerModel.this, socket, controller, mainActivity);
                         srvClient.add(svClient);
                        // if (srvClient.size() >= 1 && !listener.isClosed()) {
                         //    closeListener();
