@@ -28,12 +28,9 @@ public class Server {
      */
     public Server(int port, Controller controller, InetAddress inetAddress, MainActivity mainActivity) {
         try {
-            if (!isStarted) {
+            if (!controller.isServerStarted) {
                 //new
                 serverModel = new ServerModel(controller, port, inetAddress, mainActivity);
-
-                isStarted = true;
-
             }
 
         } catch (Exception e) {
@@ -48,7 +45,8 @@ public class Server {
      */
     public void allowConnection() {
         if (serverModel != null) {
-            serverModel.clearList();
+            serverModel.closeListener();
+            //serverModel.clearList();
             serverModel.restartServer();
             //serverModel.openListener();
         }
@@ -59,7 +57,7 @@ public class Server {
      *
      * @param msgSys
      */
-    public void sendMessage(MessageSystem msgSys) {
+    public void sendBroadcastMessage(MessageSystem msgSys) {
         if (serverModel != null)
             if (serverModel.svClient != null) {
                 serverModel.svClient.broadcast(msgSys);

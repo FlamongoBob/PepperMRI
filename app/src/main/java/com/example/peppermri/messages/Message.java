@@ -1,17 +1,21 @@
 package com.example.peppermri.messages;
 
 
-import com.example.peppermri.crypto.Decryption;
-import com.example.peppermri.crypto.Encryption;
+import static com.example.peppermri.serverclient.ServerClient.logger;
 
+import com.example.peppermri.serverclient.ServerClient;
+
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
-import java.security.NoSuchAlgorithmException;
-
-import javax.crypto.NoSuchPaddingException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public abstract class Message {
     protected MessageType type;
@@ -20,24 +24,26 @@ public abstract class Message {
     private static BufferedReader bfr;
     private static OutputStreamWriter out;
 
+    private static DataInputStream dIn;
+    private static DataOutputStream dOut;
+
     public Message(MessageType type) {
         this.type = type;
     }
 
     /**
-     * Creates and outputstream to send the message from the sender to the receiver
+     * Creates and Output Stream to send the message from the sender to the receiver
      *
      * @param socket
      */
     public void send(Socket socket) {
         try {
-            if(out == null){
+            dOut = new DataOutputStream(socket.getOutputStream());
 
-                out = new OutputStreamWriter(socket.getOutputStream());
-            }
-            out.write(this.toString() + "\n");
-            out.flush();
-        } catch (IOException e) {
+            dOut.writeUTF(this.toString());
+            dOut.flush();
+
+        } catch (Exception e) {
             String err = e.getMessage();
         }
     }
@@ -52,101 +58,122 @@ public abstract class Message {
     public static Message receive(Socket socket) {
         Message message = null;
         try {
-            if(bfr == null) {
-                bfr = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            }
-            String msgText = bfr.readLine(); // Will wait here for complete line
-            if (msgText != null) {
+            dIn = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
+            if (socket != null && !socket.isClosed()) {
 
-                //String strDecryptedMessage = decryption.decrypt(msgText);
+                while (!socket.isClosed()) {
 
-                // Parse message
-                String[] parts = msgText.split("\\|");
+                    String msgText;
+                    try {
 
-                if (parts[0].equals(MessageType.Disconnect.toString())) {
-                    message = new MessageSystem(parts[1]);
-                    message.setType(MessageType.Disconnect);
+                        if (dIn == null) {
+                            dIn = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
+                        }
+                        msgText = dIn.readUTF(); // Will wait here for complete line
 
-                } else if (parts[0].equals(MessageType.Login.toString())) {
-                    message = new MessageLogin(parts[1]
-                            , parts[2]
-                            , MessageType.Login);
-                    message.setType(MessageType.Login);
+                    } catch (EOFException eofe) {
+                        break;
+                    }
 
-                } else if (parts[0].equals(MessageType.Unsuccessful_LogIn.toString())) {
-                    message = new MessageSystem(parts[1]);
-                    message.setType(MessageType.Unsuccessful_LogIn);
+                    if (msgText != null) {
 
-                } else if (parts[0].equals(MessageType.Successful_LogIn.toString())) {
-                    message = new MessageSystem(parts[1]);
-                    message.setType(MessageType.Successful_LogIn);
+                        //String strDecryptedMessage = decryption.decrypt(msgText);
 
-                } else if (parts[0].equals(MessageType.LogOut.toString())) {
-                    message.setType(MessageType.LogOut);
+                        // Parse message
+                        String[] parts = msgText.split("\\|");
 
-                } else if (parts[0].equals(MessageType.Disconnect.toString())) {
-                    message = new MessageSystem(parts[1]);
-                    message.setType(MessageType.Disconnect);
+                        if (parts[0].equals(MessageType.Disconnect.toString())) {
+                            message = new MessageSystem(parts[1]);
+                            message.setType(MessageType.Disconnect);
 
-                } else if (parts[0].equals(MessageType.Patient.toString())) {
-                    message = new MessageSystem(parts[1]);
-                    message.setType(MessageType.Patient);
+                        } else if (parts[0].equals(MessageType.Login.toString())) {
+                            message = new MessageLogin(parts[1]
+                                    , parts[2]
+                                    , MessageType.Login);
+                            message.setType(MessageType.Login);
 
-                } else if (parts[0].equals(MessageType.System.toString())) {
-                    message = new MessageSystem(parts[1]);
-                    message.setType(MessageType.System);
+                        } else if (parts[0].equals(MessageType.Unsuccessful_LogIn.toString())) {
+                            message = new MessageSystem(parts[1]);
+                            message.setType(MessageType.Unsuccessful_LogIn);
 
-                } else if (parts[0].equals(MessageType.AllUser.toString())) {
-                    message = new MessageSystem("");
-                    message.setType(MessageType.AllUser);
+                        } else if (parts[0].equals(MessageType.Successful_LogIn.toString())) {
+                            message = new MessageSystem(parts[1]);
+                            message.setType(MessageType.Successful_LogIn);
 
-                } else if (parts[0].equals(MessageType.Test.toString())) {
-                    message = new MessageSystem("");
-                    message.setType(MessageType.Test);
+                        } else if (parts[0].equals(MessageType.LogOut.toString())) {
+                            message.setType(MessageType.LogOut);
 
-                } else if (parts[0].equals(MessageType.InsertUser.toString())) {
-                    message = new MessageI(parts[1]
-                            , parts[2]
-                            , parts[3]
-                            , parts[4]
-                            , Integer.parseInt(parts[5])
-                            , parts[6]
-                            , parts[7]
-                            , Integer.parseInt(parts[8])
-                    );
+                        } else if (parts[0].equals(MessageType.Disconnect.toString())) {
+                            message = new MessageSystem(parts[1]);
+                            message.setType(MessageType.Disconnect);
 
-                } else if (parts[0].equals(MessageType.UpdateUser.toString())) {
-                    message = new MessageU(Integer.parseInt(parts[1])
-                            , parts[2]
-                            , parts[3]
-                            , parts[4]
+                        } else if (parts[0].equals(MessageType.Patient.toString())) {
+                            message = new MessageSystem(parts[1]);
+                            message.setType(MessageType.Patient);
 
-                            , Integer.parseInt(parts[5])
-                            , parts[6]
+                        } else if (parts[0].equals(MessageType.System.toString())) {
+                            message = new MessageSystem(parts[1]);
+                            message.setType(MessageType.System);
 
-                            , Integer.parseInt(parts[7])
-                            , parts[8]
-                            , parts[9]
+                        } else if (parts[0].equals(MessageType.AllUser.toString())) {
+                            message = new MessageSystem("");
+                            message.setType(MessageType.AllUser);
 
-                            , Integer.parseInt(parts[10])
+                        } else if (parts[0].equals(MessageType.Test.toString())) {
+                            message = new MessageSystem("");
+                            message.setType(MessageType.Test);
 
-                            , Integer.parseInt(parts[11])
-                            , Integer.parseInt(parts[12])
-                    );
+                        } else if (parts[0].equals(MessageType.InsertUser.toString())) {
+                            message = new MessageI(parts[1]
+                                    , parts[2]
+                                    , parts[3]
+                                    , parts[4]
+                                    , Integer.parseInt(parts[5])
+                                    , parts[6]
+                                    , parts[7]
+                                    , Integer.parseInt(parts[8])
+                            );
 
-                } else if (parts[0].equals(MessageType.DeleteUser.toString())) {
-                    message = new MessageD(Integer.parseInt(parts[1])
-                            , Integer.parseInt(parts[2])
-                            , Integer.parseInt(parts[3])
-                    );
+                        } else if (parts[0].equals(MessageType.UpdateUser.toString())) {
+                            message = new MessageU(Integer.parseInt(parts[1])
+                                    , parts[2]
+                                    , parts[3]
+                                    , parts[4]
 
+                                    , Integer.parseInt(parts[5])
+                                    , parts[6]
+
+                                    , Integer.parseInt(parts[7])
+                                    , parts[8]
+                                    , parts[9]
+
+                                    , Integer.parseInt(parts[10])
+
+                                    , Integer.parseInt(parts[11])
+                                    , Integer.parseInt(parts[12])
+                            );
+
+                        } else if (parts[0].equals(MessageType.DeleteUser.toString())) {
+                            message = new MessageD(Integer.parseInt(parts[1])
+                                    , Integer.parseInt(parts[2])
+                                    , Integer.parseInt(parts[3])
+                            );
+
+                        }
+                    } else {
+                        break;
+                    }
+                    return message;
                 }
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
+
             String err = e.getMessage();
+            err += "";
             //Controller.ClientIsConnected.set(false);
             // Controller.ServerIsStarted.set(false);
         }
+
         return message;
     }
 

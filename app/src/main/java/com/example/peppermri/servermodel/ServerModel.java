@@ -14,6 +14,7 @@ import com.example.peppermri.serverclient.ServerClient;
 
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -26,9 +27,10 @@ public class ServerModel {
     private int intPort;
     private InetAddress inetAddress;
     Thread t;
+    Socket socket;
 
     MainActivity mainActivity;
-    public ObservableList<ServerClient> srvClient = new ObservableArrayList<>();
+    public ObservableArrayList<ServerClient> srvClient = new ObservableArrayList<>();
 
     /**
      * Constructor for the ServerModel Class,
@@ -49,6 +51,8 @@ public class ServerModel {
         t.start();
     }
 
+    //public void disconnect
+
     /**
      * Preparing variable for so that the application can create servers as needed.
      * //@param port
@@ -60,8 +64,9 @@ public class ServerModel {
         Runnable r;
         try {
             listener = new ServerSocket(intPort, 10, inetAddress);
-           // listener = new ServerSocket(intPort);
-
+           // if(!listener.getReuseAddress()) {
+            //    listener.setReuseAddress(true);
+            //}
         } catch (Exception e) {
             String err = e.getMessage();
             err += "";
@@ -78,9 +83,12 @@ public class ServerModel {
     public Runnable createServer() {
         Runnable r;
         try {
-            if (listener == null | listener.isClosed()) {
+            if(listener == null | listener.isClosed()) {
                 listener = new ServerSocket(this.intPort, 10, this.inetAddress);
+                listener.setReuseAddress(true);
+               // listener.bind(new InetSocketAddress(this.inetAddress, this.intPort));
             }
+
             controller.isServerStarted = true;
         } catch (IOException e) {
             String err = e.getMessage();
@@ -90,14 +98,14 @@ public class ServerModel {
         r = new Runnable() {
             @Override
             public void run() {
-                while (srvClient.size() < 1) {//!isStopped) {
+                while (controller.isServerStarted) {
                     try {
+
                         Socket socket = listener.accept();
                         svClient = new ServerClient(ServerModel.this, socket, controller, mainActivity);
+                        svClient.isClientJoined = true;
                         srvClient.add(svClient);
-                       // if (srvClient.size() >= 1 && !listener.isClosed()) {
-                        //    closeListener();
-                       // }
+
                     } catch (Exception e) {
                         String err = e.getMessage();
                         err += "";
@@ -143,55 +151,54 @@ public class ServerModel {
     public void clearSpecificClient(String strName) {
         for (int i = 0; i < srvClient.size(); i++) {
             ServerClient svClient = srvClient.get(i);
-            if(svClient.getName().equals(strName)){
+            if (svClient.getName().equals(strName)) {
                 svClient.stop();
                 controller.clientDisconnected(svClient.getIntUserID());
                 srvClient.remove(svClient);
-                i = srvClient.size() +1;
+                i = srvClient.size() + 1;
             }
         }
     }
 
     public void clearSpecificClient(int intUserID) {
-        MessageSystem msgSys = new MessageSystem("");
         for (int i = 0; i < srvClient.size(); i++) {
             ServerClient svClient = srvClient.get(i);
-            if(svClient.getIntUserID() == intUserID){
-                msgSys.setType(MessageType.LogOut);
-                svClient.send(msgSys);
+            if (svClient.getIntUserID() == intUserID) {
                 svClient.stop();
-                srvClient.remove(svClient);
-                i = srvClient.size() +1;
+                srvClient.remove(i);
+                svClient = null;
+                i = srvClient.size() + 1;
             }
         }
     }
 
 
-    public void sendMessage(MessageSystem msgSys, int intUserID){
+    public void sendMessage(MessageSystem msgSys, int intUserID) {
         for (int i = 0; i < srvClient.size(); i++) {
             ServerClient svClient = srvClient.get(i);
-            if(svClient.getIntUserID() == intUserID){
+            if (svClient.getIntUserID() == intUserID) {
                 svClient.send(msgSys);
-                i = srvClient.size() +1;
-            }
-        }
-    }
-    public void sendMessage(MessageUser msgU, int intUserID){
-        for (int i = 0; i < srvClient.size(); i++) {
-            ServerClient svClient = srvClient.get(i);
-            if(svClient.getIntUserID() == intUserID){
-                svClient.send(msgU);
-                i = srvClient.size() +1;
+                i = srvClient.size() + 1;
             }
         }
     }
 
-    public void sendMessage(MessageRoles msgR, int intUserID){
+    public void sendMessage(MessageUser msgU, int intUserID) {
         for (int i = 0; i < srvClient.size(); i++) {
             ServerClient svClient = srvClient.get(i);
-            if(svClient.getIntUserID() == intUserID){
+            if (svClient.getIntUserID() == intUserID) {
+                svClient.send(msgU);
+                i = srvClient.size() + 1;
+            }
+        }
+    }
+
+    public void sendMessage(MessageRoles msgR, int intUserID) {
+        for (int i = 0; i < srvClient.size(); i++) {
+            ServerClient svClient = srvClient.get(i);
+            if (svClient.getIntUserID() == intUserID) {
                 svClient.send(msgR);
-                i = srvClient.size() +1;
+                i = srvClient.size() + 1;
             }
         }
     }

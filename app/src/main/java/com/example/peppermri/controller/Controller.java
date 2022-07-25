@@ -6,7 +6,6 @@ import android.widget.TextView;
 import com.example.peppermri.MainActivity;
 import com.example.peppermri.crypto.Decryption;
 import com.example.peppermri.crypto.Encryption;
-import com.example.peppermri.messages.Message;
 import com.example.peppermri.messages.MessageD;
 import com.example.peppermri.messages.MessageI;
 import com.example.peppermri.messages.MessageRoles;
@@ -31,27 +30,39 @@ public class Controller {
     private ArrayList<User> arrLoggedInUsers = new ArrayList<>();
     PepperDB pepperDB;
     MainActivity mainActivity;
-    final private int intPortNr = 9999;//80; //= 10284;
-    final private String strIPAdress="10.0.2.15";// = "127.10.10.15";
+    final private int intPortNr = 6666;//80; //= 10284;
+    final private String strIPAdress = "10.0.2.15";// = "127.10.10.15";
+
     private ArrayList<User> arrAllUser = new ArrayList<>();
     Encryption e = new Encryption();
 
     public Controller(PepperDB pepperDB, MainActivity mainActivity) {
         this.mainActivity = mainActivity;
         this.pepperDB = pepperDB;
-        startServer();
-    }
-
-    public void startServer() {
         try {
 
-            InetAddress inetAddress = InetAddress.getByName(strIPAdress);
-            server = new Server(this.intPortNr, this, inetAddress,mainActivity);
+        //InetAddress inetAddress = InetAddress.getByName(strIPAdress);
+        //startServer(intPortNr, this,inetAddress,mainActivity);
 
         } catch (Exception ex) {
+            isServerStarted = false;
             String err = ex.getMessage();
             err += "";
         }
+    }
+
+    public Server startServer(int intPortNr, Controller controller, InetAddress inetAddress, MainActivity mainActivity) {
+        try {
+
+            server = new Server(intPortNr, controller, inetAddress, mainActivity);
+
+
+        } catch (Exception ex) {
+            isServerStarted = false;
+            String err = ex.getMessage();
+            err += "";
+        }
+        return server;
     }
 
     public boolean checkLoginCredential(String strUserName, String strPassword) {
@@ -63,9 +74,9 @@ public class Controller {
             return true;
         } else {
 
-            if(arrLoggedInUsers.size() > 0){
-                newestUser = arrLoggedInUsers.get(arrLoggedInUsers.size()-1);
-            }else {
+            if (arrLoggedInUsers.size() > 0) {
+                newestUser = arrLoggedInUsers.get(arrLoggedInUsers.size() - 1);
+            } else {
                 newestUser = null;
             }
             return false;
@@ -78,7 +89,8 @@ public class Controller {
             if (user.getIntUserID() == intUserID) {
                 arrLoggedInUsers.remove(user);
                 server.clearSpecificClient(intUserID);
-                i = arrLoggedInUsers.size() + 1;
+                server.allowConnection();
+                //i = arrLoggedInUsers.size() + 1;
             }
         }
     }
@@ -103,15 +115,35 @@ public class Controller {
         }
 
     }
-    public void check(TextView tv ){
-        //TextView tv2 = tv ;
-         ///tv2.setText(pepperDB.Check());
 
-        MessageSystem msgSys = new MessageSystem("");
-        msgSys.setType(MessageType.Test);
-        server.sendMessage(msgSys);
+    public void adminTestMessage(TextView tv) {
+        //TextView tv2 = tv ;
+        ///tv2.setText(pepperDB.Check());
+        try {
+            MessageSystem msgSys = new MessageSystem("ADMIN TEST");
+            msgSys.setType(MessageType.Patient);
+            server.sendBroadcastMessage(msgSys);
+        } catch (Exception ex) {
+            String err = "";
+            err = ex.getMessage();
+            err = "";
+        }
 
     }
+
+    public void adminDisconnectMessage() {
+        try {
+            MessageSystem msgSys = new MessageSystem("ADMIN TEST");
+            msgSys.setType(MessageType.Disconnect);
+            server.sendBroadcastMessage(msgSys);
+        } catch (Exception ex) {
+            String err = "";
+            err = ex.getMessage();
+            err = "";
+        }
+
+    }
+
 
     public User getNewestUser() {
         return newestUser;
@@ -119,7 +151,7 @@ public class Controller {
 
     Decryption d = new Decryption();
 
-    public void insertUser(MessageI msgU) {
+    public void insertUser(MessageI msgU, int intSenderUserID) {
         try {
             String strTitle = d.decrypt(msgU.getStrTitle());
             String strFirstName = d.decrypt(msgU.getStrFirstName());
@@ -138,27 +170,27 @@ public class Controller {
 
                     if (intPictureID < 0) {
                         MessageSystem msgSys = new MessageSystem("Something went wrong on the insert into tblPicture on the Server Database");
-                        server.sendMessage(msgSys);
+                        server.sendMessage(msgSys,intSenderUserID);
                     }
-                }else {
-                    strPicture = strPicture +"-"+e.encrypt(strFirstName) +"-"+ e.encrypt(strLastName);
+                } else {
+                    strPicture = strPicture + "-" + e.encrypt(strFirstName) + "-" + e.encrypt(strLastName);
                     intPictureID = pepperDB.insertNewPicture(strPicture);
 
                     if (intPictureID < 0) {
                         MessageSystem msgSys = new MessageSystem("Something went wrong on the insert into tblPicture on the Server Database");
-                        server.sendMessage(msgSys);
+                        server.sendMessage(msgSys,intSenderUserID);
                     }
                 }
                 pepperDB.insertNewEmployee(strTitle, strFirstName, strLastName, intUserID, intPictureID, intRoleID, intConfidentialInfoID);
 
                 MessageSystem msgSys = new MessageSystem("You have successfully added a new Employee to the database.! Login details are full functional");
                 msgSys.setType(MessageType.Suc_IUD);
-                server.sendMessage(msgSys);
+                server.sendMessage(msgSys,intSenderUserID);
 
             } else {
                 MessageSystem msgSys = new MessageSystem("Something went wrong on the insert into tblPicture on the Server Database");
                 msgSys.setType(MessageType.Error);
-                server.sendMessage(msgSys);
+                server.sendMessage(msgSys,intSenderUserID);
             }
 
         } catch (Exception ex) {
@@ -168,11 +200,11 @@ public class Controller {
 
             MessageSystem msgSys = new MessageSystem("Something went wrong.  Please verify everything is completed correctly! Error Message: " + ex.getMessage());
             msgSys.setType(MessageType.Error);
-            server.sendMessage(msgSys);
+            server.sendMessage(msgSys,intSenderUserID);
         }
     }
 
-    public void updateUser(MessageU msgU) {
+    public void updateUser(MessageU msgU, int intSenderUserID) {
         try {
             String strTitle = d.decrypt(msgU.getStrTitle());
             String strFirstName = d.decrypt(msgU.getStrFirstName());
@@ -189,20 +221,20 @@ public class Controller {
             int intConfidentialID = msgU.getIntConfidentialID();
 
             pepperDB.updateEmployeeData(intEmployeeID
-            , strTitle
-            , strFirstName
-            , strLastName
-            , intRoleID
-            , intConfidentialID
-            , intPictureID
-            , strPicture
-            , intUserID
-            , strUserName
-            , strPassword);
+                    , strTitle
+                    , strFirstName
+                    , strLastName
+                    , intRoleID
+                    , intConfidentialID
+                    , intPictureID
+                    , strPicture
+                    , intUserID
+                    , strUserName
+                    , strPassword);
 
             MessageSystem msgSys = new MessageSystem("Data has been successfully updated! Login details are full functional");
             msgSys.setType(MessageType.Suc_IUD);
-            server.sendMessage(msgSys);
+            server.sendMessage(msgSys,intUserID);
 
         } catch (Exception ex) {
             String err = "";
@@ -212,11 +244,11 @@ public class Controller {
 
             MessageSystem msgSys = new MessageSystem("Something went wrong while updating wrong. Error Message: " + ex.getMessage());
             msgSys.setType(MessageType.Error);
-            server.sendMessage(msgSys);
+            server.sendMessage(msgSys, intSenderUserID);
         }
     }
 
-    public void deleteUser(MessageD msdD) {
+    public void deleteUser(MessageD msdD, int intSenderUserID) {
         try {
             int intUserID = msdD.getIntUserID();
             int intEmployeeID = msdD.getIntEmployeeID();
@@ -224,9 +256,9 @@ public class Controller {
 
             MessageSystem msgSys = new MessageSystem("Data has been successfully deleted");
             msgSys.setType(MessageType.Suc_IUD);
-            server.sendMessage(msgSys);
+            server.sendMessage(msgSys,intSenderUserID);
 
-            pepperDB.deleteEmployeeData(intEmployeeID,intPictureID,intUserID);
+            pepperDB.deleteEmployeeData(intEmployeeID, intPictureID, intUserID);
         } catch (Exception ex) {
             String err = "";
             err = ex.getMessage();
@@ -235,18 +267,19 @@ public class Controller {
 
             MessageSystem msgSys = new MessageSystem("Something went wrong. Error Message: " + ex.getMessage());
             msgSys.setType(MessageType.Error);
-            server.sendMessage(msgSys);
+            server.sendMessage(msgSys,intSenderUserID);
         }
     }
-    public void collectAllUser(User user){
+
+    public void collectAllUser(User user) {
         arrAllUser.add(user);
     }
 
 
     public void getAllEmployeeData(int intUserID) {
         pepperDB.selectAllEmployeeData();
-        for(int i = 0; i<arrAllUser.size(); i++){
-            sendUser(arrAllUser.get(i),intUserID, MessageType.AllUser);
+        for (int i = 0; i < arrAllUser.size(); i++) {
+            sendUser(arrAllUser.get(i), intUserID, MessageType.AllUser);
         }
 
     }
@@ -271,41 +304,20 @@ public class Controller {
                 , user.getIntConfidentialID()
                 , user.getIntGetsConfidentialInfo());
         msgU.setType(msgType);
-        server.sendMessage(msgU,intUserID);
+        server.sendMessage(msgU, intUserID);
 
     }
 
-    public void prepareRoles(int intUserID){
+    public void prepareRoles(int intUserID) {
         pepperDB.getAllRoles(intUserID);
     }
 
 
-    public void sendRoles(int intRoleID, String strRole, int intUserID){
+    public void sendRoles(int intRoleID, String strRole, int intUserID) {
         MessageRoles msgR = new MessageRoles(intRoleID, strRole);
         server.sendMessage(msgR, intUserID);
 
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 }
