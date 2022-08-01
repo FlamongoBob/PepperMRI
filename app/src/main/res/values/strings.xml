@@ -4,4 +4,64 @@
     <string name="msg_SucLogin">You have successfully Connected to Pepper!</string>
     <string name="msg_Disconnect">You have successfully disconnected from Pepper!</string>
     <string name="msg_Test">Testing connection to Pepper</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="alertD_OK">OK</string>
+    <string name="alertD_YES">Ja</string>
+    <string name="alertD_NO">Nein</string>
+
+    <string name="Logged_Out_Title">Ausgeloggt!</string>
+    <string name="Logged_Out_Text">Sie haben sich erfolgreich abgemeldet! \n Einen schönen Tag noch!</string>
+
+    <string name="UnSuc_Login_Title">Login nicht erfolgreich!</string>
+    <string name="UnSuc_Login_Text">Benutzername oder Passwort falsch, bitte versuchen Sie es erneut.</string>
+
+    <string name="Suc_Login_Title">Erfolgreicher Login!</string>
+    <string name="Suc_Login_Text">Sie haben sich erfolgreich eingeloggt!</string>
+
+    <string name="Error_Title">Fehler!</string>
+    <string name="Error_Text">Es ist ein Fehler aufgetreten! \n Fehlermeldung: </string>
+
+    <string name="Unsuc_NewUserAdded_Title">Der Benutzer wurde nicht erstellt!</string>
+    <string name="Unsuc_NewUserAdded_Text">Beim Erstellen eines neuen Benutzers ist ein Fehler aufgetreten.
+        \n Benutzer wurde nicht erstellt!
+        \n Fehlermeldung: </string>
+
+    <string name="Suc_IUD_Title">Operation erfolgreich abgeschlossen!</string>
+    <string name="Suc_IUD_Text">Die Operation wurde von der Serverdatenbank erfolgreich abgeschlossen</string>
+
+    <string name="last_message_rec_Text">Zuletzt empfangener Nachrichtentyp: \n</string>
+    <string name="sel_Item_Text">Ausgewähltes Element: </string>
+
+    <string name="Log_Out_Title">Ausloggen</string>
+    <string name="Log_Out_Text">Sind Sie sicher, dass Sie sich ausloggen möchten?</string>
+    <string name="Yes_Log_Out_Text">Sie werden jetzt ausgeloggt.</string>
+    <string name="No_Log_Out_Text">Sie bleiben weiterhin eingeloggt.</string>
+
+
+    <string name="Not_Logged_In_Title">Nicht eingeloggt</string>
+    <string name="Not_Logged_In_Text">Bitte loggen Sie sich ein, bevor Sie zu anderen Seiten weitergehen.</string>
+    <string name="Page_not_Changed">Page has not been changed.</string>
+
+    <string name="UserName">Benutzername</string>
+    <string name="Password">Passwort</string>
+    <string name="Login">Anmeldung</string>
+    <string name="PatientInformation">Patienten Information</string>
+    <string name="Profile">Profil</string>
+    <string name="Server">Server</string>
+    <string name="FirstName">Vorname</string>
+    <string name="LastName">Nachname</string>
+    <string name="addNewUser">Neuen Benutzer hinzufügen</string>
+    <string name="Test_Connection">Verbindung testen</string>
+    <string name="Status">Status</string>
+    <string name="Disconnected">Getrennt</string>
+    <string name="Messages_Log">Meldungen Protokoll</string>
+    <string name="Title">Title</string>
+
+    <string name="rb_Receive">Empfangen</string>
+    <string name="rb_Not_Receive">Nicht Empfangen</string>
+
+    <string name="delete_entries">Eingaben löschen</string>
+
 </resources>

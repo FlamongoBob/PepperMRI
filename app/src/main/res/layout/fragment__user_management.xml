@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".Fragment_UserManagement">
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="-127dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/clNewUser2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context=".Fragment_NewUser">
+
+            <EditText
+                android:id="@+id/etUMFirstName"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginEnd="10dp"
+                android:autofillHints=""
+                android:ems="10"
+                android:hint="@string/FirstName"
+                android:inputType="textPersonName"
+                android:minHeight="60dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/etUMTitle" />
+
+            <EditText
+                android:id="@+id/etUMLastName"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginEnd="10dp"
+                android:autofillHints=""
+                android:ems="10"
+                android:hint="@string/LastName"
+                android:inputType="textPersonName"
+                android:minHeight="60dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/etUMFirstName" />
+
+            <EditText
+                android:id="@+id/etUMUserName"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginEnd="10dp"
+                android:autofillHints=""
+                android:ems="10"
+                android:hint="@string/UserName"
+                android:inputType="textPersonName"
+                android:minHeight="60dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.407"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/radioGroupUM" />
+
+            <EditText
+                android:id="@+id/etUMPassword"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="10dp"
+                android:autofillHints=""
+                android:ems="10"
+                android:hint="@string/Password"
+                android:inputType="textPersonName"
+                android:minHeight="60dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.481"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/etUMUserName" />
+
+            <EditText
+                android:id="@+id/etUMTitle"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginEnd="10dp"
+                android:hint="@string/Title"
+                android:minHeight="60dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/ibUMPicture" />
+
+            <Spinner
+                android:id="@+id/spUMRole"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginEnd="10dp"
+                android:minHeight="60dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/etUMLastName" />
+
+            <ImageButton
+                android:id="@+id/ibUMPicture"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:layout_marginStart="17dp"
+                android:layout_marginTop="7dp"
+                android:layout_marginEnd="243dp"
+                android:adjustViewBounds="true"
+                android:maxWidth="250dp"
+
+                android:maxHeight="100dp"
+                android:minWidth="250dp"
+                android:minHeight="100dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:src="@tools:sample/avatars" />
+
+            <Button
+                android:id="@+id/btnUMSaveChanges"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="10dp"
+                android:minHeight="60dp"
+                android:text="Save Changes"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/etUMPassword" />
+
+            <Button
+                android:id="@+id/btnUMDeleteUser"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="10dp"
+                android:minHeight="60dp"
+                android:text="Benutzer Löschen"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/btnUMSaveChanges" />
+
+            <RadioGroup
+                android:id="@+id/radioGroupUM"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginEnd="10dp"
+                android:minHeight="120dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/spUMRole">
+
+                <RadioButton
+                    android:id="@+id/rb_ReceiveUM"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="60dp"
+                    android:text="@string/rb_Receive"
+                    tools:layout_editor_absoluteX="145dp"
+                    tools:layout_editor_absoluteY="461dp" />
+
+                <RadioButton
+                    android:id="@+id/rb_Not_ReceiveUM"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="60dp"
+                    android:text="@string/rb_Not_Receive"
+                    tools:layout_editor_absoluteX="277dp"
+                    tools:layout_editor_absoluteY="461dp" />
+            </RadioGroup>
+
+            <Button
+                android:id="@+id/btnUMNext"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="60dp"
+                android:minWidth="80dp"
+                android:minHeight="60dp"
+                android:text="Nächster"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/btnUMDeleteUser" />
+
+            <Button
+                android:id="@+id/btnUMPrevious"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="60dp"
+                android:minWidth="80dp"
+                android:minHeight="60dp"
+                android:text="Vorher"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/btnUMDeleteUser" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+
+</FrameLayout>

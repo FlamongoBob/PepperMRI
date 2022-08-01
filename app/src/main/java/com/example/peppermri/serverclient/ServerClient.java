@@ -20,7 +20,6 @@ import com.example.peppermri.messages.MessageUser;
 import com.example.peppermri.model.User;
 import com.example.peppermri.servermodel.ServerModel;
 
-import java.io.IOException;
 import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -129,7 +128,7 @@ public class ServerClient {
                                     if (msg instanceof MessageLogin) {
                                         boolean isCorrect = false;
 
-                                        isCorrect = controller.checkLoginCredential(
+                                        isCorrect = controller.clientCheckLoginCredential(
                                                 d.decrypt(((MessageLogin) msg).getPassword())
                                                 , d.decrypt(((MessageLogin) msg).getName())
                                         );
@@ -173,7 +172,7 @@ public class ServerClient {
 
                                                 msgU.send(socket);
 
-                                                controller.prepareRoles(intUserID);
+                                                controller.clientPrepareRoles(intUserID);
                                             }
 
                                         } else {
@@ -208,20 +207,20 @@ public class ServerClient {
 
                                         } else if (msg.getType().equals(MessageType.AllUser)) {
 
-                                            controller.getAllEmployeeData(intUserID);
+                                            controller.clientGetAllEmployeeData(intUserID);
 
                                         }
                                     } else if (msg instanceof MessageI) {
 
-                                        controller.insertUser((MessageI) msg, serverClient.intUserID);
+                                        controller.clientInsertUser((MessageI) msg, serverClient.intUserID);
 
                                     } else if (msg instanceof MessageU) {
 
-                                        controller.updateUser((MessageU) msg, serverClient.intUserID);
+                                        controller.clientUpdateUser((MessageU) msg, serverClient.intUserID);
 
                                     } else if (msg instanceof MessageD) {
 
-                                        controller.deleteUser((MessageD) msg, serverClient.intUserID);
+                                        controller.clientDeleteUser((MessageD) msg, serverClient.intUserID);
 
                                     }
                                 } catch (Exception ex) {

@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/clNewUser1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Fragment_NewUser">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="-127dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/clNewUser2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context=".Fragment_NewUser">
+
+            <EditText
+                android:id="@+id/etNuFirstName"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginEnd="10dp"
+                android:autofillHints=""
+                android:ems="10"
+                android:hint="@string/FirstName"
+                android:inputType="textPersonName"
+                android:minHeight="60dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/etNuTitle" />
+
+            <EditText
+                android:id="@+id/etNuLastName"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginEnd="10dp"
+                android:autofillHints=""
+                android:ems="10"
+                android:hint="@string/LastName"
+                android:inputType="textPersonName"
+                android:minHeight="60dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/etNuFirstName" />
+
+            <EditText
+                android:id="@+id/etNuUserName"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginEnd="10dp"
+                android:autofillHints=""
+                android:ems="10"
+                android:hint="@string/UserName"
+                android:inputType="textPersonName"
+                android:minHeight="60dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.407"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/rg_Nu_Confidential" />
+
+            <EditText
+                android:id="@+id/etNuPassword"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="10dp"
+                android:autofillHints=""
+                android:ems="10"
+                android:hint="@string/Password"
+                android:inputType="textPersonName"
+                android:minHeight="60dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.481"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/etNuUserName" />
+
+            <EditText
+                android:id="@+id/etNuTitle"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginEnd="10dp"
+                android:hint="@string/Title"
+                android:minHeight="60dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/ibNewPicture" />
+
+            <Spinner
+                android:id="@+id/spNuRole"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginEnd="10dp"
+                android:minHeight="60dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/etNuLastName" />
+
+            <ImageButton
+                android:id="@+id/ibNewPicture"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:layout_marginStart="17dp"
+                android:layout_marginTop="7dp"
+                android:layout_marginEnd="243dp"
+                android:adjustViewBounds="true"
+                android:maxWidth="250dp"
+
+                android:maxHeight="100dp"
+                android:minWidth="250dp"
+                android:minHeight="100dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:src="@tools:sample/avatars" />
+
+            <Button
+                android:id="@+id/btnAddNewUser"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="19dp"
+                android:layout_marginEnd="10dp"
+                android:hint="@string/addNewUser"
+                android:minHeight="60dp"
+                android:onClick="addNewUser"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/etNuPassword" />
+
+            <Button
+                android:id="@+id/btnNewUserClear"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="19dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="60dp"
+                android:hint="@string/delete_entries"
+                android:minHeight="60dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/btnAddNewUser" />
+
+            <RadioGroup
+                android:id="@+id/rg_Nu_Confidential"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginEnd="10dp"
+                android:minHeight="120dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/spNuRole">
+
+                <RadioButton
+                    android:id="@+id/rb_Nu_RConfidentalInfo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="60dp"
+                    android:text="@string/rb_Receive"
+                    tools:layout_editor_absoluteX="145dp"
+                    tools:layout_editor_absoluteY="461dp" />
+
+                <RadioButton
+                    android:id="@+id/rb_Nu_NConfidentalInfo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="60dp"
+                    android:text="@string/rb_Not_Receive"
+                    tools:layout_editor_absoluteX="277dp"
+                    tools:layout_editor_absoluteY="461dp" />
+            </RadioGroup>
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

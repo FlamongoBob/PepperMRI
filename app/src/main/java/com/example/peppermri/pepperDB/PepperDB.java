@@ -8,6 +8,7 @@ import android.widget.Toast;
 
 import com.example.peppermri.MainActivity;
 import com.example.peppermri.controller.Controller;
+import com.example.peppermri.messages.MessageType;
 import com.example.peppermri.model.User;
 
 public class PepperDB {
@@ -186,7 +187,7 @@ public class PepperDB {
                 intRoleID = cursorRole.getInt(0);
                 strRole = cursorRole.getString(1);
 
-                controller.sendRoles(intRoleID, strRole, intUserID);
+                controller.clientSendRoles(intRoleID, strRole, intUserID);
             } while (cursorRole.moveToNext());
             cursorRole.close();
         }
@@ -317,7 +318,7 @@ public class PepperDB {
 
     }
 
-    public void selectAllEmployeeData() {
+    public void selectAllEmployeeData(boolean blnIsClientDemand, int intUserID) {
 
         SQLiteDatabase db = this.myhelper.getReadableDatabase();
         Cursor cursorselectAll = db.rawQuery("Select E.intEmployeeID AS intGlobalID" +
@@ -369,7 +370,12 @@ public class PepperDB {
                         , cursorselectAll.getInt(11)
                         , cursorselectAll.getInt(12)
                 );
-                controller.collectAllUser(user);
+                if(blnIsClientDemand) {
+                    controller.clientSendUser(user, intUserID, MessageType.AllUser);
+
+                }else {
+                    controller.serverCollectAllUser(user);
+                }
             } while (cursorselectAll.moveToNext());
         }
     }

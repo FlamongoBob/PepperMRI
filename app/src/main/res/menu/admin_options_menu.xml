@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/Login"
+        android:title="@string/addNewUser" />
+
+    <item android:id="@+id/New_User"
+        android:title="@string/addNewUser" />
+
+    <item android:id="@+id/UserManagement"
+        android:title="User Management" />
+
+    <item android:id="@+id/LogOut"
+        android:title="@string/Log_Out_Title" />
+</menu>

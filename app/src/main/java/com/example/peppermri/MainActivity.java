@@ -9,31 +9,38 @@ import android.os.IBinder;
 import android.widget.Button;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import com.aldebaran.qi.sdk.QiContext;
 import com.aldebaran.qi.sdk.RobotLifecycleCallbacks;
 import com.aldebaran.qi.sdk.design.activity.RobotActivity;
 import com.example.peppermri.Service.LocalService;
 import com.example.peppermri.controller.Controller;
+import com.example.peppermri.fragment.Fragment_Login;
+import com.example.peppermri.fragment.Fragment_NewUser;
+import com.example.peppermri.fragment.Fragment_PepperInformation;
+import com.example.peppermri.fragment.Fragment_UserManagement;
 import com.example.peppermri.pepperDB.PepperDB;
+import com.example.peppermri.utils.Manager;
 
 
 public class MainActivity extends RobotActivity implements RobotLifecycleCallbacks {
     PepperDB pepperDB;
     Controller controller;
 
+    Manager manager;
     LocalService mService;
     boolean mBound = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         pepperDB = new PepperDB(this, this);
         this.controller = new Controller(pepperDB, this);
+
+        manager = new Manager(this, controller);
+
 
         TextView tv = findViewById(R.id.tvWorld);
         Button btn = findViewById(R.id.button);
@@ -41,9 +48,9 @@ public class MainActivity extends RobotActivity implements RobotLifecycleCallbac
 
             controller.adminTestMessage(tv);
         });
-
-
     }
+
+
 
     public void shutDownServer() {
         //controller.ser
