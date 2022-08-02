@@ -99,6 +99,12 @@ public class Controller {
         }
     }
 
+    public void serverShutDown(MessageSystem msg) {
+        server.sendBroadcastMessage(msg);
+        server.shutDown();
+        isServerStarted = false;
+    }
+
     public void clientDisconnected(int intUserID) {
         for (int i = 0; i < arrLoggedInUsers.size(); i++) {
             User user = arrLoggedInUsers.get(i);
@@ -293,7 +299,7 @@ public class Controller {
 
 
     public void clientGetAllEmployeeData(int intUserID) {
-        pepperDB.selectAllEmployeeData(true,intUserID);
+        pepperDB.selectAllEmployeeData(true, intUserID);
         for (int i = 0; i < clientArrAllUser.size(); i++) {
             clientSendUser(clientArrAllUser.get(i), intUserID, MessageType.AllUser);
         }
@@ -489,19 +495,23 @@ public class Controller {
 
     }
 
-    /**pepperInfo*/
+    /**
+     * pepperInfo
+     */
 
     public int getIntRoleID() {
         return loggedInUser.getIntRoleID();
     }
 
 
-    /**Login*/
+    /**
+     * Login
+     */
 
     EditText etLoginPassword, etLoginUserName;
     TextView tvLoginInformation;
     User loggedInUser;
-    public boolean isLoggedIn = false;
+    public boolean isLoggedIn = true;
 
     public boolean serverCheckLoginCredential(String strUserName, String strPassword) {
         loggedInUser = null;
@@ -718,8 +728,8 @@ public class Controller {
 
             if (intCheckedID == rb_Nu_NConfidentalInfo.getId()) {
                 serverInsertUser(etNuTitle.getText().toString()
-                        ,etNuFirstName.getText().toString()
-                        ,etNuLastName.getText().toString()
+                        , etNuFirstName.getText().toString()
+                        , etNuLastName.getText().toString()
 
                         , newUserPictureChecker(strNewUserPicture)
 
@@ -732,8 +742,8 @@ public class Controller {
                 );
             } else if (intCheckedID == rb_Nu_RConfidentalInfo.getId()) {
                 serverInsertUser(etNuTitle.getText().toString()
-                        ,etNuFirstName.getText().toString()
-                        ,etNuLastName.getText().toString()
+                        , etNuFirstName.getText().toString()
+                        , etNuLastName.getText().toString()
 
                         , newUserPictureChecker(strNewUserPicture)
 

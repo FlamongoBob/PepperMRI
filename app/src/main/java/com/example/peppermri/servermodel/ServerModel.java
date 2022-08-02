@@ -64,9 +64,6 @@ public class ServerModel {
         Runnable r;
         try {
             listener = new ServerSocket(intPort, 10, inetAddress);
-           // if(!listener.getReuseAddress()) {
-            //    listener.setReuseAddress(true);
-            //}
         } catch (Exception e) {
             String err = e.getMessage();
             err += "";
@@ -86,13 +83,14 @@ public class ServerModel {
             if(listener == null | listener.isClosed()) {
                 listener = new ServerSocket(this.intPort, 10, this.inetAddress);
                 listener.setReuseAddress(true);
-               // listener.bind(new InetSocketAddress(this.inetAddress, this.intPort));
             }
 
             controller.isServerStarted = true;
         } catch (IOException e) {
             String err = e.getMessage();
             err += "";
+
+            controller.isServerStarted = true;
         }
 
         r = new Runnable() {
@@ -126,7 +124,7 @@ public class ServerModel {
     }
 
     /**
-     * Close the Serversocket afte a client has conected.
+     * Close the ServerSocket after a client has connected.
      */
     public void closeListener() {
         if (listener != null) {
@@ -169,6 +167,14 @@ public class ServerModel {
                 svClient = null;
                 i = srvClient.size() + 1;
             }
+        }
+    }
+
+    public void clearAllClients() {
+        for (int i = 0; i < srvClient.size(); i++) {
+            ServerClient svClient = srvClient.get(i);
+                svClient.stop();
+                i = srvClient.size() + 1;
         }
     }
 

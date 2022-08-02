@@ -3,12 +3,15 @@ package com.example.peppermri.fragment;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
+
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -32,28 +35,36 @@ public class Fragment_PepperInformation extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
+        try {
+            setHasOptionsMenu(true);
+            super.onCreate(savedInstanceState);
+
+
+        }catch(Exception ex){
+            String err ="";
+            err = ex.getMessage();
+            err+="";
+        }
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment__pepper_information, container, false);
-    }
-
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.admin_options_menu, menu);
         super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater
+            , @Nullable ViewGroup container
+            , @Nullable Bundle savedInstanceState) {
+        View vRoots = inflater.inflate(R.layout.fragment__pepper_information, container, false);
+        // Inflate the layout for this fragment
+        return vRoots;
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         return manager.manageFragmentView(item);
     }
-
 }

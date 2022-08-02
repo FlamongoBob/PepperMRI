@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/Login"
-        android:title="@string/addNewUser" />
+        android:title="@string/Suc_Login_Title" />
 
     <item android:id="@+id/New_User"
         android:title="@string/addNewUser" />
@@ -9,6 +10,12 @@
     <item android:id="@+id/UserManagement"
         android:title="User Management" />
 
+    <item android:id="@+id/Server"
+        android:title="Server" />
+
     <item android:id="@+id/LogOut"
         android:title="@string/Log_Out_Title" />
+
+    <item android:id="@+id/Pepper"
+        android:title="Pepper" />
 </menu>

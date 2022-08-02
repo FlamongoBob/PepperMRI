@@ -9,6 +9,8 @@ import android.os.IBinder;
 
 import com.example.peppermri.MainActivity;
 import com.example.peppermri.controller.Controller;
+import com.example.peppermri.messages.MessageSystem;
+import com.example.peppermri.messages.MessageType;
 import com.example.peppermri.server.Server;
 
 import java.net.InetAddress;
@@ -62,27 +64,26 @@ public class LocalService extends Service {
         return START_NOT_STICKY;
     }
 
-    @Override
-    public final void onTaskRemoved(Intent rootIntent){
-       /* if(Controller.isClientConnected) {
-            super.onTaskRemoved(rootIntent);
+    public void stopServer(){
+        if(controller.isServerStarted) {
 
             MessageSystem msgDisc = new MessageSystem("Disconnect");
             msgDisc.setType(MessageType.Disconnect);
-            sendMessage(msgDisc);
+            controller.serverShutDown(msgDisc);
 
-            client.disconnect();
-        }*/
+        }
+    }
+
+
+
+    @Override
+    public final void onTaskRemoved(Intent rootIntent){
+        stopServer();
     }
 
     public void appClosedDisconnect(){
-       /* if(Controller.isClientConnected) {
-            MessageSystem msgDisc = new MessageSystem("Disconnect");
-            msgDisc.setType(MessageType.Disconnect);
-            sendMessage(msgDisc);
 
-            client.disconnect();
-        }*/
+        stopServer();
     }
 
 

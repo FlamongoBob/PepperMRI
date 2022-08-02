@@ -4,6 +4,7 @@
     package="com.example.peppermri">
 
     <uses-feature android:name="com.softbank.hardware.pepper" />
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
@@ -15,11 +16,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.PepperMRI"
+        android:windowSoftInputMode="adjustPan"
         tools:targetApi="31">
-
+        <activity
+            android:name=".MainActivity_Pepper"
+            android:exported="false" />
         <activity
             android:name=".MainActivity"
-            android:exported="true" >
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -27,15 +31,17 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".BroadcastReceiver.NotificationReminderBroadcast"
+        <receiver
+            android:name=".BroadcastReceiver.NotificationReminderBroadcast"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
             </intent-filter>
         </receiver>
 
-        <service android:name=".Service.LocalService"
-            android:enabled ="true"/>
-
+        <service
+            android:name=".Service.LocalService"
+            android:enabled="true" />
     </application>
+
 </manifest>

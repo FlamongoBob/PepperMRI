@@ -85,6 +85,11 @@ public class Server {
         serverModel.clearSpecificClient(intUserID);
     }
 
+
+    public void shutDown(){
+        serverModel.stopServer();
+        serverModel.clearList();
+    }
     /*
     public void SendMessage(DisconnectMessage disconnectMessage) {
         if (serverModel != null) {

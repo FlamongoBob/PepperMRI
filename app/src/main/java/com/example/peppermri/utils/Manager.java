@@ -1,6 +1,7 @@
 package com.example.peppermri.utils;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -10,11 +11,13 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import com.example.peppermri.MainActivity;
+import com.example.peppermri.MainActivity_Pepper;
 import com.example.peppermri.R;
 import com.example.peppermri.controller.Controller;
 import com.example.peppermri.fragment.Fragment_Login;
 import com.example.peppermri.fragment.Fragment_NewUser;
 import com.example.peppermri.fragment.Fragment_PepperInformation;
+import com.example.peppermri.fragment.Fragment_ServerConnection;
 import com.example.peppermri.fragment.Fragment_UserManagement;
 
 public class Manager extends AppCompatActivity {
@@ -26,35 +29,46 @@ public class Manager extends AppCompatActivity {
     Fragment_NewUser frnUser;
     Fragment_PepperInformation frgPepper;
     Fragment_UserManagement frgMgmt;
-    Fragment activeFragment ;
-    int intPos=-1;
+    Fragment_ServerConnection frgServer;
+    Fragment activeFragment;
+    int intPos = -1;
 
     private AlertDialog.Builder alertDialogBuilder;
     private AlertDialog alertDialog;
 
-    public FragmentManager frgMng = getSupportFragmentManager();
+    public FragmentManager frgMng;//= getFragmentManager();
     //Fragment activeFragment = frgSplashImage;
 
-    public Manager(MainActivity mainActivity, Controller controller){
+    public Manager(MainActivity mainActivity, Controller controller, FragmentManager frgMng) {
         this.mainActivity = mainActivity;
         this.controller = controller;
+        this.frgMng = frgMng;
 
-        frgLogin = new Fragment_Login(this.controller,   this.mainActivity);
-        frnUser = new Fragment_NewUser(this.controller,   this.mainActivity);
-        frgPepper = new Fragment_PepperInformation(this.controller,   this.mainActivity, this);
-        frgMgmt = new Fragment_UserManagement(this.controller,   this.mainActivity);
-        activeFragment = frgPepper;
+        try {
 
-        frgMng.beginTransaction().add(R.id.container, frgLogin, "frgLogin").hide(frgLogin).commit();
-        frgMng.beginTransaction().add(R.id.container, frnUser, "frnUser").hide(frnUser).commit();
-        frgMng.beginTransaction().add(R.id.container, frgMgmt, "frgMgmt").hide(frgMgmt).commit();
-        frgMng.beginTransaction().add(R.id.container, frgPepper, "frgPepper").commit();
+            frgLogin = new Fragment_Login(this.controller, this.mainActivity, this);
+            frnUser = new Fragment_NewUser(this.controller, this.mainActivity, this);
+            frgPepper = new Fragment_PepperInformation(this.controller, this.mainActivity, this);
+            frgMgmt = new Fragment_UserManagement(this.controller, this.mainActivity,this);
+            frgServer = new Fragment_ServerConnection(this.controller, this.mainActivity, this);
+            activeFragment = frgLogin;
 
+            frgMng.beginTransaction().add(R.id.container, frgPepper, "frgPepper").hide(frgPepper).commit();
+            frgMng.beginTransaction().add(R.id.container, frnUser, "frnUser").hide(frnUser).commit();
+            frgMng.beginTransaction().add(R.id.container, frgMgmt, "frgMgmt").hide(frgMgmt).commit();
+            frgMng.beginTransaction().add(R.id.container, frgServer, "frgServer").hide(frgServer).commit();
+            frgMng.beginTransaction().add(R.id.container, frgLogin, "frgLogin").commit();
+
+        } catch (Exception ex) {
+            String err = "";
+            err = ex.getMessage();
+            err += "";
+        }
     }
 
-    public boolean manageFragmentView(MenuItem menuItem){
-
-        alertDialogBuilder = new AlertDialog.Builder(this);
+    public boolean manageFragmentView(MenuItem menuItem) {
+        try {
+        alertDialogBuilder = new AlertDialog.Builder(mainActivity);
 
         switch (menuItem.getItemId()) {
             case R.id.New_User:
@@ -71,7 +85,7 @@ public class Manager extends AppCompatActivity {
                             alertAdminRights();
                             return false;
                         }
-                    }else {
+                    } else {
                         alertNotLoggedIn();
                     }
 
@@ -98,7 +112,7 @@ public class Manager extends AppCompatActivity {
                             return false;
                         }
 
-                    }else {
+                    } else {
                         alertNotLoggedIn();
                     }
 
@@ -108,26 +122,12 @@ public class Manager extends AppCompatActivity {
                 }
             case R.id.Login:
                 try {
-                    if(!controller.isLoggedIn) {
                         if (!activeFragment.getTag().equals(frgMng.findFragmentByTag("frgLogin").getTag())) {
                             frgMng.beginTransaction().hide(activeFragment).show(frgLogin).commit();
                             activeFragment = frgLogin;
 
                             return true;
                         }
-                    }else{
-
-                        alertDialogBuilder.setTitle("Already Logged IN");
-                        alertDialogBuilder.setMessage(getText(R.string.Not_Logged_In_Text));
-                        alertDialogBuilder.setPositiveButton(getText(R.string.alertD_OK), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface arg0, int arg1) {
-                                Toast.makeText(mainActivity, getText(R.string.Page_not_Changed), Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                        alertDialog = alertDialogBuilder.create();
-                        alertDialog.show();
-                    }
 
                     return false;
 
@@ -143,8 +143,7 @@ public class Manager extends AppCompatActivity {
 
                         frgMng.beginTransaction().hide(activeFragment).show(frgPepper).commit();
                         activeFragment = frgPepper;
-                        return true;
-                    }else {
+                    } else {
 
                         alertNotLoggedIn();
                     }
@@ -155,44 +154,81 @@ public class Manager extends AppCompatActivity {
                     String err = ex.getMessage();
                     err += "";
                 }
+
+            case R.id.Server:
+                try {
+
+                    if (controller.isLoggedIn) {
+                        if (controller.getIntRoleID() == 1) {
+                            if (!activeFragment.getTag().equals(frgMng.findFragmentByTag("frgServer").getTag())) {
+                                frgMng.beginTransaction().hide(activeFragment).show(frgServer).commit();
+                                activeFragment = frgServer;
+                                frgServer.getInformation();
+                                return true;
+                            }
+                        }
+
+                    }
+                    return false;
+
+                } catch (Exception ex) {
+                    String err = ex.getMessage();
+                    err += "";
+                }
+            case R.id.Pepper:
+                try {
+
+                    Intent intent = new Intent(mainActivity, MainActivity_Pepper.class);
+                    mainActivity.startActivity(intent);
+                } catch (Exception ex) {
+                    String err = ex.getMessage();
+                    err += "";
+                }
             default:
 
                 return super.onOptionsItemSelected(menuItem);
         }
+        } catch (Exception ex) {
+            String err = ex.getMessage();
+            err += "";
+
+            return super.onOptionsItemSelected(menuItem);
+        }
     }
 
-    public void alertAdminRights(){
+    public void alertAdminRights() {
 
 
         alertDialogBuilder.setTitle("Missing Admin rights");
         alertDialogBuilder.setMessage("You need the admin rights to select this");
-        alertDialogBuilder.setPositiveButton(getText(R.string.alertD_OK), new DialogInterface.OnClickListener() {
+        alertDialogBuilder.setPositiveButton(mainActivity.getText(R.string.alertD_OK), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface arg0, int arg1) {
-                Toast.makeText(mainActivity, getText(R.string.Page_not_Changed), Toast.LENGTH_SHORT).show();
-            }
-        });
-        alertDialog = alertDialogBuilder.create();
-        alertDialog.show();
-    }
-    public void alertNotLoggedIn(){
-        alertDialogBuilder.setTitle(getText(R.string.Not_Logged_In_Title));
-        alertDialogBuilder.setMessage(getText(R.string.Not_Logged_In_Text));
-        alertDialogBuilder.setPositiveButton(getText(R.string.alertD_OK), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface arg0, int arg1) {
-                Toast.makeText(mainActivity, getText(R.string.Page_not_Changed), Toast.LENGTH_SHORT).show();
+                Toast.makeText(mainActivity, mainActivity.getText(R.string.Page_not_Changed), Toast.LENGTH_SHORT).show();
             }
         });
         alertDialog = alertDialogBuilder.create();
         alertDialog.show();
     }
 
-    public void replaceFragment(Fragment fragment){
+    public void alertNotLoggedIn() {
+        alertDialogBuilder.setTitle(mainActivity.getText(R.string.Not_Logged_In_Title));
+        alertDialogBuilder.setMessage(mainActivity.getText(R.string.Not_Logged_In_Text));
+        alertDialogBuilder.setPositiveButton(mainActivity.getText(R.string.alertD_OK), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface arg0, int arg1) {
+                Toast.makeText(mainActivity, mainActivity.getText(R.string.Page_not_Changed), Toast.LENGTH_SHORT).show();
+            }
+        });
+        alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+    }
+
+    public void replaceFragment(Fragment fragment) {
         //frgMng.beginTransaction().replace(R.id.stateFragmentHolder, fragment).commit();
     }
 
-    public void removeLastFragment(Fragment lastFragment){
+    public void removeLastFragment(Fragment lastFragment) {
         frgMng.beginTransaction().remove(lastFragment).commit();
     }
 }

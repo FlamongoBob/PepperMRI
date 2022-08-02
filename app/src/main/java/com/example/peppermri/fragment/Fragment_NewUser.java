@@ -4,6 +4,9 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -20,19 +23,30 @@ import androidx.fragment.app.Fragment;
 import com.example.peppermri.MainActivity;
 import com.example.peppermri.R;
 import com.example.peppermri.controller.Controller;
+import com.example.peppermri.utils.Manager;
 
 import java.util.Random;
 
 public class Fragment_NewUser extends Fragment {
     private Controller controller;
     private MainActivity mainActivity;
+    Manager manager;
     EditText etNuUserName;
     String strFirstName = "";
     String strLastName = "";
 
-    public Fragment_NewUser(Controller controller, MainActivity mainActivity) {
-        this.controller = controller;
+    public Fragment_NewUser(Controller controller, MainActivity mainActivity, Manager manager) {
         this.mainActivity = mainActivity;
+        this.controller = controller;
+        this.manager = manager;
+
+    }
+
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        //setHasOptionsMenu(true);
+        super.onCreate(savedInstanceState);
     }
 
     @Nullable
@@ -44,6 +58,7 @@ public class Fragment_NewUser extends Fragment {
         initiateNewUserControls(vRoot);
         return vRoot;
     }
+
 
     private void initiateNewUserControls(View vRoot) {
         ImageButton ibNewPicture = vRoot.findViewById(R.id.ibNewPicture);
@@ -106,6 +121,7 @@ public class Fragment_NewUser extends Fragment {
         controller.setRb_Nu_RConfidentalInfo(rb_Nu_RConfidentalInfo);
 
         RadioButton rb_Nu_NConfidentalInfo = vRoot.findViewById(R.id.rb_Nu_NConfidentalInfo);
+        rb_Nu_NConfidentalInfo.setChecked(true);
         controller.setRb_Nu_NConfidentalInfo(rb_Nu_NConfidentalInfo);
 
         Spinner spNuRole = vRoot.findViewById(R.id.spNuRole);
@@ -180,4 +196,17 @@ public class Fragment_NewUser extends Fragment {
 
 
     }
+/*
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        //inflater.inflate(R.menu.admin_options_menu, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        return manager.manageFragmentView(item);
+    }*/
 }

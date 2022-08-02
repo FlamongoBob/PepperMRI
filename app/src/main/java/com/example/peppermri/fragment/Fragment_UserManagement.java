@@ -2,6 +2,9 @@ package com.example.peppermri.fragment;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -9,24 +12,30 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import com.example.peppermri.MainActivity;
 import com.example.peppermri.R;
 import com.example.peppermri.controller.Controller;
+import com.example.peppermri.utils.Manager;
 
 public class Fragment_UserManagement extends Fragment {
 
     MainActivity mainActivity;
     Controller controller;
+    Manager manager;
     int intPos = -1;
 
-    public Fragment_UserManagement(Controller controller, MainActivity mainActivity) {
+    public Fragment_UserManagement(Controller controller, MainActivity mainActivity, Manager manager) {
         this.mainActivity = mainActivity;
         this.controller = controller;
+        this.manager = manager;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        //setHasOptionsMenu(true);
         super.onCreate(savedInstanceState);
     }
 
@@ -86,4 +95,17 @@ public class Fragment_UserManagement extends Fragment {
         });
 
     }
+
+/*
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.admin_options_menu, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        return manager.manageFragmentView(item);
+    }*/
 }

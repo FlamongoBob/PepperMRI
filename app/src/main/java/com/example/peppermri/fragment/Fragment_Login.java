@@ -1,37 +1,49 @@
 package com.example.peppermri.fragment;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.peppermri.MainActivity;
 import com.example.peppermri.R;
 import com.example.peppermri.controller.Controller;
+import com.example.peppermri.utils.Manager;
 
 public class Fragment_Login extends Fragment {
 
+    private AlertDialog.Builder alertDialogBuilder;
+    private AlertDialog alertDialog;
     Controller controller;
     Button btnLogin;
     MainActivity mainActivity;
+
+    Manager manager;
     public boolean isLoggedIn = false;
 
-    public Fragment_Login(Controller controller,MainActivity mainActivity) {
-        // Required empty public constructor
-        this.controller = controller;
+    public Fragment_Login(Controller controller, MainActivity mainActivity, Manager manager) {
         this.mainActivity = mainActivity;
+        this.controller = controller;
+        this.manager = manager;
 
-        setHasOptionsMenu(true);
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        // setHasOptionsMenu(true);
         super.onCreate(savedInstanceState);
     }
 
@@ -44,7 +56,6 @@ public class Fragment_Login extends Fragment {
         initiateLoginControls(vRoot);
         return vRoot;
     }
-
 
 
     public void initiateLoginControls(View vRoot) {
@@ -62,15 +73,28 @@ public class Fragment_Login extends Fragment {
             btnLogin.setOnClickListener(view -> {
                 TextView tvLoginInformation = vRoot.findViewById(R.id.tvLoginInformation);
                 controller.setTvLoginInformation(tvLoginInformation);
+                if (!isLoggedIn) {
+                    isLoggedIn = controller.serverCheckLoginCredential(etLoginUserName.getText().toString()
+                            , etLoginPassword.getText().toString());
+                } else {
 
-               isLoggedIn= controller.serverCheckLoginCredential(etLoginUserName.getText().toString()
-                        , etLoginPassword.getText().toString());
-
-               if(isLoggedIn){
-                   tvLoginInformation.setText(R.string.msg_SucLogin);
-               }else {
-                   tvLoginInformation.setText(R.string.msg_UnSucLogin);
-               }
+                    alertDialogBuilder = new AlertDialog.Builder(mainActivity);
+                    alertDialogBuilder.setTitle("Already Logged In");
+                    alertDialogBuilder.setMessage(R.string.Not_Logged_In_Text);
+                    alertDialogBuilder.setPositiveButton(R.string.alertD_OK, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface arg0, int arg1) {
+                            Toast.makeText(mainActivity, R.string.Page_not_Changed, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    alertDialog = alertDialogBuilder.create();
+                    alertDialog.show();
+                }
+                if (isLoggedIn) {
+                    tvLoginInformation.setText(R.string.msg_SucLogin);
+                } else {
+                    tvLoginInformation.setText(R.string.msg_UnSucLogin);
+                }
 
             });
 
@@ -80,6 +104,17 @@ public class Fragment_Login extends Fragment {
         }
     }
 
+/*
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.admin_options_menu, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
 
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        return manager.manageFragmentView(item);
+    }*/
 
 }
