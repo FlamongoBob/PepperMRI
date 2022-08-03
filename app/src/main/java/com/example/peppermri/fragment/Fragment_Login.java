@@ -79,8 +79,8 @@ public class Fragment_Login extends Fragment {
                 } else {
 
                     alertDialogBuilder = new AlertDialog.Builder(mainActivity);
-                    alertDialogBuilder.setTitle("Already Logged In");
-                    alertDialogBuilder.setMessage(R.string.Not_Logged_In_Text);
+                    alertDialogBuilder.setTitle(R.string.Allready_Logged_In_Title);
+                    alertDialogBuilder.setMessage(R.string.Allready_Logged_In_Text);
                     alertDialogBuilder.setPositiveButton(R.string.alertD_OK, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface arg0, int arg1) {
@@ -103,18 +103,4 @@ public class Fragment_Login extends Fragment {
             err = ex.getMessage();
         }
     }
-
-/*
-    @Override
-    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        inflater.inflate(R.menu.admin_options_menu, menu);
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        return manager.manageFragmentView(item);
-    }*/
-
 }

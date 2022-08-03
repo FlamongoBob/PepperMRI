@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity{//extends RobotActivity impl
     Controller controller;
 
     Manager manager;
-    LocalService mService;
+    public LocalService mService;
     boolean mBound = false;
 
 

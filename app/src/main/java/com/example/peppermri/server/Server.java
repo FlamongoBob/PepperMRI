@@ -39,6 +39,13 @@ public class Server {
         }
     }
 
+    public String getIP(){
+        return serverModel.getIP();
+    }
+
+    public String getPort(){
+        return serverModel.getPort();
+    }
     /**
      * Clearing arraylist to prepare to recreate a new Server
      * Recreating Server.

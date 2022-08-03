@@ -10,6 +10,30 @@
     xmlns:tools="http://schemas.android.com/tools">
 
 
+    <TextView
+        android:id="@+id/tvStatusServerConnectionIPTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="88dp"
+        android:layout_marginEnd="500dp"
+        android:text="IP"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/iv_Robot"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvStatusServerConnectionPortTItle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="128dp"
+        android:layout_marginEnd="500dp"
+        android:text="Port"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/iv_Robot"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <Button
         android:id="@+id/btnStartServer"
         android:layout_width="0dp"
@@ -52,7 +76,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="28dp"
         android:layout_marginTop="45dp"
-        android:layout_marginEnd="1026dp"
+        android:layout_marginEnd="500dp"
         android:text="@string/Status"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/iv_Robot"
@@ -62,12 +86,35 @@
         android:id="@+id/tvStatusServerConnection"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="28dp"
-        android:layout_marginTop="23dp"
-        android:layout_marginEnd="1012dp"
+        android:layout_marginStart="57dp"
+        android:layout_marginTop="45dp"
+        android:layout_marginEnd="412dp"
         android:text="@string/Disconnected"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/iv_Robot"
-        app:layout_constraintTop_toBottomOf="@+id/tvStatusServerConnectionTitle" />
+        app:layout_constraintStart_toEndOf="@+id/tvStatusServerConnectionTitle"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvStatusServerConnectionIP"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="70dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="412dp"
+        android:text="@string/Disconnected"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/tvStatusServerConnectionIPTitle"
+        app:layout_constraintTop_toBottomOf="@+id/tvStatusServerConnection" />
+
+    <TextView
+        android:id="@+id/tvStatusServerConnectionPort"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="57dp"
+        android:layout_marginTop="132dp"
+        android:layout_marginEnd="400dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/tvStatusServerConnectionPortTItle"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -6,62 +6,83 @@
     <string name="msg_Test">Testing connection to Pepper</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-
     <string name="alertD_OK">OK</string>
-    <string name="alertD_YES">Ja</string>
-    <string name="alertD_NO">Nein</string>
-
-    <string name="Logged_Out_Title">Ausgeloggt!</string>
-    <string name="Logged_Out_Text">Sie haben sich erfolgreich abgemeldet! \n Einen schönen Tag noch!</string>
-
-    <string name="UnSuc_Login_Title">Login nicht erfolgreich!</string>
-    <string name="UnSuc_Login_Text">Benutzername oder Passwort falsch, bitte versuchen Sie es erneut.</string>
-
-    <string name="Suc_Login_Title">Erfolgreicher Login!</string>
-    <string name="Suc_Login_Text">Sie haben sich erfolgreich eingeloggt!</string>
-
-    <string name="Error_Title">Fehler!</string>
-    <string name="Error_Text">Es ist ein Fehler aufgetreten! \n Fehlermeldung: </string>
-
-    <string name="Unsuc_NewUserAdded_Title">Der Benutzer wurde nicht erstellt!</string>
-    <string name="Unsuc_NewUserAdded_Text">Beim Erstellen eines neuen Benutzers ist ein Fehler aufgetreten.
-        \n Benutzer wurde nicht erstellt!
-        \n Fehlermeldung: </string>
-
-    <string name="Suc_IUD_Title">Operation erfolgreich abgeschlossen!</string>
-    <string name="Suc_IUD_Text">Die Operation wurde von der Serverdatenbank erfolgreich abgeschlossen</string>
-
-    <string name="last_message_rec_Text">Zuletzt empfangener Nachrichtentyp: \n</string>
-    <string name="sel_Item_Text">Ausgewähltes Element: </string>
-
-    <string name="Log_Out_Title">Ausloggen</string>
-    <string name="Log_Out_Text">Sind Sie sicher, dass Sie sich ausloggen möchten?</string>
-    <string name="Yes_Log_Out_Text">Sie werden jetzt ausgeloggt.</string>
-    <string name="No_Log_Out_Text">Sie bleiben weiterhin eingeloggt.</string>
-
-
-    <string name="Not_Logged_In_Title">Nicht eingeloggt</string>
-    <string name="Not_Logged_In_Text">Bitte loggen Sie sich ein, bevor Sie zu anderen Seiten weitergehen.</string>
+    <string name="alertD_YES">Yes</string>
+    <string name="alertD_NO">No</string>
+    <string name="Logged_Out_Title">Logged Out!</string>
+    <string name="Logged_Out_Text">You have successfully logged out! \n Have a nice day!</string>
+    <string name="UnSuc_Login_Title">Unsuccessful Login!</string>
+    <string name="UnSuc_Login_Text">Username or Password incorrect, please try again.</string>
+    <string name="Suc_Login_Title">Successful Login!</string>
+    <string name="Suc_Login_Text">You have successfully Logged in!</string>
+    <string name="Error_Title">Error!</string>
+    <string name="Error_Text">An error has occurred! \n Error Message: </string>
+    <string name="Unsuc_NewUserAdded_Title">User was not created!</string>
+    <string name="Unsuc_NewUserAdded_Text">An error has occurred while creating new User.
+        \n User was not Created!
+        \n Error Message: </string>
+    <string name="Suc_IUD_Title">Operation completed successfully!</string>
+    <string name="Suc_IUD_Text">The operation was successfully completed by the server database</string>
+    <string name="last_message_rec_Text">Last Message Type received: \n</string>
+    <string name="sel_Item_Text">Selected Item: </string>
+    <string name="Log_Out_Title">Logout</string>
+    <string name="Log_Out_Text">Are you sure you want to log out ?</string>
+    <string name="Yes_Log_Out_Text">You will be Logged out now.</string>
+    <string name="No_Log_Out_Text">You will stay logged in.</string>
+    <string name="Not_Logged_In_Title">Not Logged In</string>
+    <string name="Not_Logged_In_Text">Please login before moving on to other pages.</string>
     <string name="Page_not_Changed">Page has not been changed.</string>
-
-    <string name="UserName">Benutzername</string>
-    <string name="Password">Passwort</string>
-    <string name="Login">Anmeldung</string>
-    <string name="PatientInformation">Patienten Information</string>
-    <string name="Profile">Profil</string>
+    <string name="UserName">Username.</string>
+    <string name="Password">Password</string>
+    <string name="Login">Login</string>
+    <string name="PatientInformation">Patient Information</string>
+    <string name="Profile">Profile</string>
     <string name="Server">Server</string>
-    <string name="FirstName">Vorname</string>
-    <string name="LastName">Nachname</string>
-    <string name="addNewUser">Neuen Benutzer hinzufügen</string>
-    <string name="Test_Connection">Verbindung testen</string>
+    <string name="FirstName">Firstname</string>
+    <string name="LastName">LastName</string>
+    <string name="addNewUser">Add New User</string>
+    <string name="Test_Connection">Test Connection</string>
     <string name="Status">Status</string>
-    <string name="Disconnected">Getrennt</string>
-    <string name="Messages_Log">Meldungen Protokoll</string>
+    <string name="Disconnected">Disconnected</string>
+    <string name="Messages_Log">Messages Log</string>
     <string name="Title">Title</string>
+    <string name="rb_Receive">Receive</string>
+    <string name="rb_Not_Receive">Not Receive</string>
+    <string name="delete_entries">Clear entries</string>
 
-    <string name="rb_Receive">Empfangen</string>
-    <string name="rb_Not_Receive">Nicht Empfangen</string>
+    <string name="Admin_Test">Admin Test</string>
+    <string name="Error_tblPicture">Something went wrong on the insert into tblPicture on the Server Database</string>
+    <string name="Suc_Employee">You have successfully added a new Employee to the database.! Login details are full functional</string>
+    <string name="Error_Exception">Something went wrong.  Please verify everything is completed correctly! Error Message: </string>
+    <string name="Error_tblUser">Something went wrong on the insert into tblUser on the Server Database" </string>
 
-    <string name="delete_entries">Eingaben löschen</string>
+
+    <!--
+        mainActivity.getText(R.string.Error_Exception).toString()
+
+     <string name="Admin_Test">Admin Test</string>
+
+    -->
+    <string name="Suc_Update">Data has been successfully updated! Login details are full functional</string>
+    <string name="Error_UpdateUser">Something went wrong while updating wrong. Error Message:</string>
+    <string name="Suc_Delete">Data has been successfully deleted</string>
+    <string name="Error_Delete">Something went wrong. Error Message: </string>
+
+    <string name="Delete_Yourself_Title">Trying To Delete Yourself </string>
+    <string name="Delete_Yourself_Text">You are trying to delete yourself </string>
+    <string name="Delete_Yourself_Text2">You cannot delete yourself. </string>
+    <string name="Delete_Yourself_Text3">You did not delete yourself. </string>
+
+    <string name="Delete_User_Title">Trying To Delete User </string>
+    <string name="Delete_User_Text">Are You sure you want to delete this User from the System? </string>
+    <string name="Suc_Delete_User">You have not deleted this User. </string>
+
+
+    <string name="Error_Something">Something went wrong.  Please verify everything is completed correctly! Error Message: </string>
+
+
+    <string name="Allready_Logged_In_Title">Allready Logged In</string>
+    <string name="Allready_Logged_In_Text">You are allready logged in</string>
+
 
 </resources>

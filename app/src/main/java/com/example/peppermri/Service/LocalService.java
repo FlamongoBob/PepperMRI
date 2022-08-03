@@ -4,8 +4,10 @@ import static android.app.Service.START_NOT_STICKY;
 
 import android.app.Service;
 import android.content.Intent;
+import android.net.wifi.WifiManager;
 import android.os.Binder;
 import android.os.IBinder;
+import android.text.format.Formatter;
 
 import com.example.peppermri.MainActivity;
 import com.example.peppermri.controller.Controller;
@@ -19,8 +21,8 @@ public class LocalService extends Service {
 
     Server server;
     Controller controller;
-    final private int intPortNr = 6666;//80; //= 10284;
-    final private String strIPAdress = "10.0.2.15";// = "127.10.10.15";
+    final private int intPortNr = 10284;//= 6666;//80;
+    final private String strIPAdress = "127.0.0.1";// = "127.10.10.15";//= "10.0.2.15";
     // Binder given to clients
     private final IBinder binder = new LocalBinder();
 
@@ -49,7 +51,11 @@ public class LocalService extends Service {
             if (this.controller == null) {
                 this.controller = controller;
             }
-            InetAddress inetAddress = InetAddress.getByName(strIPAdress);
+            WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
+            String ipAddress = Formatter.formatIpAddress(wifiManager.getConnectionInfo().getIpAddress());
+
+            InetAddress inetAddress = InetAddress.getByName(ipAddress);
+           // InetAddress inetAddress = InetAddress.getByName(strIPAdress);
             server = controller.startServer(intPortNr, controller, inetAddress, mainActivity);
         }catch (Exception exception){
             String err ="";
@@ -58,6 +64,14 @@ public class LocalService extends Service {
         }
     }
 
+    public String getIP(){
+
+        return server.getIP();
+    }
+
+    public String getPort(){
+        return server.getPort();
+    }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {

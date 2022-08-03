@@ -49,7 +49,7 @@ public class Manager extends AppCompatActivity {
             frgLogin = new Fragment_Login(this.controller, this.mainActivity, this);
             frnUser = new Fragment_NewUser(this.controller, this.mainActivity, this);
             frgPepper = new Fragment_PepperInformation(this.controller, this.mainActivity, this);
-            frgMgmt = new Fragment_UserManagement(this.controller, this.mainActivity,this);
+            frgMgmt = new Fragment_UserManagement(this.controller, this.mainActivity, this);
             frgServer = new Fragment_ServerConnection(this.controller, this.mainActivity, this);
             activeFragment = frgLogin;
 
@@ -68,60 +68,62 @@ public class Manager extends AppCompatActivity {
 
     public boolean manageFragmentView(MenuItem menuItem) {
         try {
-        alertDialogBuilder = new AlertDialog.Builder(mainActivity);
+            alertDialogBuilder = new AlertDialog.Builder(mainActivity);
 
-        switch (menuItem.getItemId()) {
-            case R.id.New_User:
-                try {
-                    if (controller.isLoggedIn) {
-                        if (controller.getIntRoleID() == 1) {
-                            if (!activeFragment.getTag().equals(frgMng.findFragmentByTag("frnUser").getTag())) {
-                                frgMng.beginTransaction().hide(activeFragment).show(frnUser).commit();
-                                activeFragment = frnUser;
-                                return true;
+            switch (menuItem.getItemId()) {
+                case R.id.New_User:
+                    try {
+                        if (controller.isLoggedIn) {
+                            if (controller.getIntRoleID() == 1) {
+                                if (!activeFragment.getTag().equals(frgMng.findFragmentByTag("frnUser").getTag())) {
+                                    frgMng.beginTransaction().hide(activeFragment).show(frnUser).commit();
+                                    activeFragment = frnUser;
+                                    return true;
+                                }
+
+                            } else {
+                                alertAdminRights();
+                                return false;
+                            }
+                        } else {
+                            alertNotLoggedIn();
+                        }
+
+                        return false;
+                    } catch (Exception ex) {
+                        String err = ex.getMessage();
+                        err += "";
+                    }
+                    break;
+                case R.id.UserManagement:
+                    try {
+                        if (controller.isLoggedIn) {
+                            if (controller.getIntRoleID() == 1) {
+                                if (!activeFragment.getTag().equals(frgMng.findFragmentByTag("frgMgmt").getTag())) {
+                                    frgMng.beginTransaction().hide(activeFragment).show(frgMgmt).commit();
+                                    activeFragment = frgMgmt;
+
+                                    controller.serverGetAllEmployeeData();
+
+                                    intPos = controller.starFillUserManagement(0);
+                                    return true;
+                                }
+                            } else {
+                                alertAdminRights();
+                                return false;
                             }
 
                         } else {
-                            alertAdminRights();
-                            return false;
-                        }
-                    } else {
-                        alertNotLoggedIn();
-                    }
-
-                    return false;
-                } catch (Exception ex) {
-                    String err = ex.getMessage();
-                    err += "";
-                }
-            case R.id.UserManagement:
-                try {
-                    if (controller.isLoggedIn) {
-                        if (controller.getIntRoleID() == 1) {
-                            if (!activeFragment.getTag().equals(frgMng.findFragmentByTag("frgMgmt").getTag())) {
-                                frgMng.beginTransaction().hide(activeFragment).show(frgMgmt).commit();
-                                activeFragment = frgMgmt;
-
-                                controller.serverGetAllEmployeeData();
-
-                                intPos = controller.starFillUserManagement(0);
-                                return true;
-                            }
-                        } else {
-                            alertAdminRights();
-                            return false;
+                            alertNotLoggedIn();
                         }
 
-                    } else {
-                        alertNotLoggedIn();
+                    } catch (Exception ex) {
+                        String err = ex.getMessage();
+                        err += "";
                     }
-
-                } catch (Exception ex) {
-                    String err = ex.getMessage();
-                    err += "";
-                }
-            case R.id.Login:
-                try {
+                    break;
+                case R.id.Login:
+                    try {
                         if (!activeFragment.getTag().equals(frgMng.findFragmentByTag("frgLogin").getTag())) {
                             frgMng.beginTransaction().hide(activeFragment).show(frgLogin).commit();
                             activeFragment = frgLogin;
@@ -129,71 +131,75 @@ public class Manager extends AppCompatActivity {
                             return true;
                         }
 
-                    return false;
+                        return false;
 
-                } catch (Exception ex) {
-                    String err = ex.getMessage();
-                    err += "";
-                }
-
-            case R.id.LogOut:
-                try {
-                    if (controller.isLoggedIn) {
-                        /**TODO Logout*/
-
-                        frgMng.beginTransaction().hide(activeFragment).show(frgPepper).commit();
-                        activeFragment = frgPepper;
-                    } else {
-
-                        alertNotLoggedIn();
+                    } catch (Exception ex) {
+                        String err = ex.getMessage();
+                        err += "";
                     }
 
-                    return false;
+                    break;
+                case R.id.LogOut:
+                    try {
+                        if (controller.isLoggedIn) {
+                            /**TODO Logout*/
 
-                } catch (Exception ex) {
-                    String err = ex.getMessage();
-                    err += "";
-                }
+                            frgMng.beginTransaction().hide(activeFragment).show(frgPepper).commit();
+                            activeFragment = frgPepper;
+                        } else {
 
-            case R.id.Server:
-                try {
-
-                    if (controller.isLoggedIn) {
-                        if (controller.getIntRoleID() == 1) {
-                            if (!activeFragment.getTag().equals(frgMng.findFragmentByTag("frgServer").getTag())) {
-                                frgMng.beginTransaction().hide(activeFragment).show(frgServer).commit();
-                                activeFragment = frgServer;
-                                frgServer.getInformation();
-                                return true;
-                            }
+                            alertNotLoggedIn();
                         }
 
+                        return false;
+
+                    } catch (Exception ex) {
+                        String err = ex.getMessage();
+                        err += "";
                     }
-                    return false;
+                    break;
+                case R.id.Server:
+                    try {
 
-                } catch (Exception ex) {
-                    String err = ex.getMessage();
-                    err += "";
-                }
-            case R.id.Pepper:
-                try {
+                        if (controller.isLoggedIn) {
+                            if (controller.getIntRoleID() == 1) {
+                                if (!activeFragment.getTag().equals(frgMng.findFragmentByTag("frgServer").getTag())) {
+                                    frgMng.beginTransaction().hide(activeFragment).show(frgServer).commit();
+                                    activeFragment = frgServer;
+                                    frgServer.getInformation();
+                                    return true;
+                                }
+                            }
 
-                    Intent intent = new Intent(mainActivity, MainActivity_Pepper.class);
-                    mainActivity.startActivity(intent);
-                } catch (Exception ex) {
-                    String err = ex.getMessage();
-                    err += "";
-                }
-            default:
+                        }
+                        return false;
 
-                return super.onOptionsItemSelected(menuItem);
-        }
+                    } catch (Exception ex) {
+                        String err = ex.getMessage();
+                        err += "";
+                    }
+                    break;
+                case R.id.Pepper:
+                    try {
+
+                        Intent intent = new Intent(mainActivity, MainActivity_Pepper.class);
+                        mainActivity.startActivity(intent);
+                    } catch (Exception ex) {
+                        String err = ex.getMessage();
+                        err += "";
+                    }
+                    break;
+                default:
+
+                    return super.onOptionsItemSelected(menuItem);
+            }
         } catch (Exception ex) {
             String err = ex.getMessage();
             err += "";
 
             return super.onOptionsItemSelected(menuItem);
         }
+        return super.onOptionsItemSelected(menuItem);
     }
 
     public void alertAdminRights() {

@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.RadioButton;
@@ -21,6 +22,7 @@ import com.example.peppermri.MainActivity;
 import com.example.peppermri.R;
 import com.example.peppermri.crypto.Decryption;
 import com.example.peppermri.crypto.Encryption;
+import com.example.peppermri.messages.Message;
 import com.example.peppermri.messages.MessageD;
 import com.example.peppermri.messages.MessageI;
 import com.example.peppermri.messages.MessageRoles;
@@ -47,7 +49,7 @@ public class Controller {
     PepperDB pepperDB;
     MainActivity mainActivity;
     final private int intPortNr = 6666;//80; //= 10284;
-    final private String strIPAdress = "10.0.2.15";// = "127.10.10.15";
+    final private String strIPAdress  = "127.10.10.15"; //= "10.0.2.15";
 
     private ArrayList<User> clientArrAllUser = new ArrayList<>();
     Encryption e = new Encryption();
@@ -117,11 +119,6 @@ public class Controller {
         }
     }
 
-    /**
-     * TODO Better Logic for choosing who to send it to
-     *
-     * @param strPatientInfo
-     */
     public void sendPatientInformation(String strPatientInfo) {
         MessageSystem msgSys = new MessageSystem(strPatientInfo);
         msgSys.setType(MessageType.Patient);
@@ -142,7 +139,7 @@ public class Controller {
         //TextView tv2 = tv ;
         ///tv2.setText(pepperDB.Check());
         try {
-            MessageSystem msgSys = new MessageSystem("ADMIN TEST");
+            MessageSystem msgSys = new MessageSystem(mainActivity.getText(R.string.Admin_Test).toString());
             msgSys.setType(MessageType.Patient);
             server.sendBroadcastMessage(msgSys);
         } catch (Exception ex) {
@@ -155,7 +152,7 @@ public class Controller {
 
     public void adminDisconnectMessage() {
         try {
-            MessageSystem msgSys = new MessageSystem("ADMIN TEST");
+            MessageSystem msgSys = new MessageSystem(mainActivity.getText(R.string.Admin_Test).toString());
             msgSys.setType(MessageType.Disconnect);
             server.sendBroadcastMessage(msgSys);
         } catch (Exception ex) {
@@ -191,26 +188,25 @@ public class Controller {
                     intPictureID = pepperDB.insertNewPicture(strPicture);
 
                     if (intPictureID < 0) {
-                        MessageSystem msgSys = new MessageSystem("Something went wrong on the insert into tblPicture on the Server Database");
+                        MessageSystem msgSys = new MessageSystem(mainActivity.getText(R.string.Error_tblPicture).toString());
                         server.sendMessage(msgSys, intSenderUserID);
                     }
                 } else {
-                    strPicture = strPicture + "-" + e.encrypt(strFirstName) + "-" + e.encrypt(strLastName);
                     intPictureID = pepperDB.insertNewPicture(strPicture);
 
                     if (intPictureID < 0) {
-                        MessageSystem msgSys = new MessageSystem("Something went wrong on the insert into tblPicture on the Server Database");
+                        MessageSystem msgSys = new MessageSystem(mainActivity.getText(R.string.Error_tblPicture).toString());
                         server.sendMessage(msgSys, intSenderUserID);
                     }
                 }
                 pepperDB.insertNewEmployee(strTitle, strFirstName, strLastName, intUserID, intPictureID, intRoleID, intConfidentialInfoID);
 
-                MessageSystem msgSys = new MessageSystem("You have successfully added a new Employee to the database.! Login details are full functional");
+                MessageSystem msgSys = new MessageSystem(mainActivity.getText(R.string.Suc_Employee).toString());
                 msgSys.setType(MessageType.Suc_IUD);
                 server.sendMessage(msgSys, intSenderUserID);
 
             } else {
-                MessageSystem msgSys = new MessageSystem("Something went wrong on the insert into tblPicture on the Server Database");
+                MessageSystem msgSys = new MessageSystem(mainActivity.getText(R.string.Error_tblUser).toString());
                 msgSys.setType(MessageType.Error);
                 server.sendMessage(msgSys, intSenderUserID);
             }
@@ -220,7 +216,7 @@ public class Controller {
             err = ex.getMessage();
             err += "";
 
-            MessageSystem msgSys = new MessageSystem("Something went wrong.  Please verify everything is completed correctly! Error Message: " + ex.getMessage());
+            MessageSystem msgSys = new MessageSystem(mainActivity.getText(R.string.Error_Exception).toString() + ex.getMessage());
             msgSys.setType(MessageType.Error);
             server.sendMessage(msgSys, intSenderUserID);
         }
@@ -254,7 +250,7 @@ public class Controller {
                     , strUserName
                     , strPassword);
 
-            MessageSystem msgSys = new MessageSystem("Data has been successfully updated! Login details are full functional");
+            MessageSystem msgSys = new MessageSystem( mainActivity.getText(R.string.Suc_Update).toString());
             msgSys.setType(MessageType.Suc_IUD);
             server.sendMessage(msgSys, intUserID);
 
@@ -264,7 +260,7 @@ public class Controller {
             err += "";
 
 
-            MessageSystem msgSys = new MessageSystem("Something went wrong while updating wrong. Error Message: " + ex.getMessage());
+            MessageSystem msgSys = new MessageSystem( mainActivity.getText(R.string.Error_UpdateUser).toString() + ex.getMessage());
             msgSys.setType(MessageType.Error);
             server.sendMessage(msgSys, intSenderUserID);
         }
@@ -276,7 +272,7 @@ public class Controller {
             int intEmployeeID = msdD.getIntEmployeeID();
             int intPictureID = msdD.getIntPictureID();
 
-            MessageSystem msgSys = new MessageSystem("Data has been successfully deleted");
+            MessageSystem msgSys = new MessageSystem(mainActivity.getText(R.string.Suc_Delete).toString());
             msgSys.setType(MessageType.Suc_IUD);
             server.sendMessage(msgSys, intSenderUserID);
 
@@ -287,7 +283,7 @@ public class Controller {
             err += "";
 
 
-            MessageSystem msgSys = new MessageSystem("Something went wrong. Error Message: " + ex.getMessage());
+            MessageSystem msgSys = new MessageSystem(mainActivity.getText(R.string.Error_Delete).toString() + ex.getMessage());
             msgSys.setType(MessageType.Error);
             server.sendMessage(msgSys, intSenderUserID);
         }
@@ -300,28 +296,27 @@ public class Controller {
 
     public void clientGetAllEmployeeData(int intUserID) {
         pepperDB.selectAllEmployeeData(true, intUserID);
-        for (int i = 0; i < clientArrAllUser.size(); i++) {
+       /* for (int i = 0; i < clientArrAllUser.size(); i++) {
             clientSendUser(clientArrAllUser.get(i), intUserID, MessageType.AllUser);
-        }
+        }*/
 
     }
 
     public void clientSendUser(User user, int intUserID, MessageType msgType) {
         MessageUser msgU = new MessageUser(user.getIntEmployeeID()
-                , user.getStrTitle()
-                , user.getStrFirstname()
-                , user.getStrLastname()
+                , e.encrypt(user.getStrTitle())
+                , e.encrypt(user.getStrFirstname())
+                , e.encrypt(user.getStrLastname())
 
                 , user.getIntPictureID()
-                , user.getStrPicture()
+                , e.encrypt(user.getStrPicture())
 
                 , user.getIntRoleID()
-                , user.getStrRole()
+                , e.encrypt(user.getStrRole())
 
                 , user.getIntUserID()
-                , user.getStrUserName()
-                , user.getStrPassword()
-
+                , e.encrypt(user.getStrUserName())
+                , e.encrypt(user.getStrPassword())
 
                 , user.getIntConfidentialID()
                 , user.getIntGetsConfidentialInfo());
@@ -337,6 +332,7 @@ public class Controller {
 
     public void clientSendRoles(int intRoleID, String strRole, int intUserID) {
         MessageRoles msgR = new MessageRoles(intRoleID, strRole);
+        msgR.setType(MessageType.Roles);
         server.sendMessage(msgR, intUserID);
 
     }
@@ -586,7 +582,7 @@ public class Controller {
             err += "";
 
 
-            MessageSystem msgSys = new MessageSystem("Something went wrong while updating wrong. Error Message: " + ex.getMessage());
+            MessageSystem msgSys = new MessageSystem(mainActivity.getText(R.string.Error_UpdateUser).toString() + ex.getMessage());
             msgSys.setType(MessageType.Error);
         }
     }
@@ -595,27 +591,26 @@ public class Controller {
     public void deleteEmployee() {
 
         if (currentUser.getIntEmployeeID() == userCurrentSelectedUm.getIntEmployeeID()) {
-            alertDialogBuilder.setTitle("Trying To Delete Yourself");
-            alertDialogBuilder.setMessage("You are trying to commit forced Log out");
+            alertDialogBuilder.setTitle(mainActivity.getText(R.string.Delete_Yourself_Title).toString());
+            alertDialogBuilder.setMessage(mainActivity.getText(R.string.Delete_Yourself_Text).toString());
             alertDialogBuilder.setPositiveButton(mainActivity.getText(R.string.alertD_YES), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface arg0, int arg1) {
-                    Toast.makeText(mainActivity, "You have deleted yourself and have been logged out from the system.", Toast.LENGTH_SHORT).show();
-                    Toast.makeText(mainActivity, "Just kidding. Please don't delete yourself. I..I.. I need you!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mainActivity, mainActivity.getText(R.string.Delete_Yourself_Text2).toString(), Toast.LENGTH_SHORT).show();
                 }
             });
 
             alertDialogBuilder.setNegativeButton(mainActivity.getText(R.string.alertD_NO), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface arg0, int arg1) {
-                    Toast.makeText(mainActivity, "You did not delete yourself! Great I had faith in you!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mainActivity, mainActivity.getText(R.string.Delete_Yourself_Text3).toString(), Toast.LENGTH_SHORT).show();
                 }
             });
             AlertDialog alertDialog = alertDialogBuilder.create();
             alertDialog.show();
         } else {
-            alertDialogBuilder.setTitle("Trying To Delete User");
-            alertDialogBuilder.setMessage("Are You sure you want to delete this User from the System?");
+            alertDialogBuilder.setTitle(mainActivity.getText(R.string.Delete_User_Title).toString());
+            alertDialogBuilder.setMessage(mainActivity.getText(R.string.Delete_User_Text).toString());
             alertDialogBuilder.setPositiveButton(mainActivity.getText(R.string.alertD_YES), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface arg0, int arg1) {
@@ -630,7 +625,7 @@ public class Controller {
                 @Override
                 public void onClick(DialogInterface arg0, int arg1) {
 
-                    Toast.makeText(mainActivity, "You have not deleted this User.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mainActivity, mainActivity.getText(R.string.Suc_Delete_User).toString(), Toast.LENGTH_SHORT).show();
                 }
             });
             AlertDialog alertDialog = alertDialogBuilder.create();
@@ -648,32 +643,24 @@ public class Controller {
             int intUserID = pepperDB.insertNewUser(strUsername, strPassword);
             int intPictureID = -1;
             if (intUserID > 0) {
-                if (!strPicture.isEmpty() && !strPicture.equals("NoPicture")) {
-                    intPictureID = pepperDB.insertNewPicture(strPicture);
+                intPictureID = pepperDB.insertNewPicture(strPicture);
 
-                    if (intPictureID < 0) {
-                        MessageSystem msgSys = new MessageSystem("Something went wrong on the insert into tblPicture on the Server Database");
-                        /**TODO*/
-                    }
-                } else {
-                    strPicture = strPicture + "-" + e.encrypt(strFirstName) + "-" + e.encrypt(strLastName);
-                    intPictureID = pepperDB.insertNewPicture(strPicture);
-
-                    if (intPictureID < 0) {
-                        MessageSystem msgSys = new MessageSystem("Something went wrong on the insert into tblPicture on the Server Database");
-                        /**TODO*/
-                    }
+                if (intPictureID < 0) {
+                    MessageSystem msgSys = new MessageSystem(mainActivity.getText(R.string.Error_tblPicture).toString());
+                    showInformation(msgSys);
                 }
+
                 pepperDB.insertNewEmployee(strTitle, strFirstName, strLastName, intUserID, intPictureID, intRoleID, intConfidentialInfoID);
 
-                MessageSystem msgSys = new MessageSystem("You have successfully added a new Employee to the database.! Login details are full functional");
+                MessageSystem msgSys = new MessageSystem(mainActivity.getText(R.string.Suc_Employee).toString());
                 msgSys.setType(MessageType.Suc_IUD);
-                /**TODO*/
+                showInformation(msgSys);
 
 
             } else {
-                MessageSystem msgSys = new MessageSystem("Something went wrong on the insert into tblPicture on the Server Database");
-                /**TODO*/
+                MessageSystem msgSys = new MessageSystem(mainActivity.getText(R.string.Error_tblPicture).toString());
+
+                showInformation(msgSys);
             }
 
         } catch (Exception ex) {
@@ -681,9 +668,10 @@ public class Controller {
             err = ex.getMessage();
             err += "";
 
-            MessageSystem msgSys = new MessageSystem("Something went wrong.  Please verify everything is completed correctly! Error Message: " + ex.getMessage());
+            MessageSystem msgSys = new MessageSystem(mainActivity.getText(R.string.Error_Something).toString() + ex.getMessage());
             msgSys.setType(MessageType.Error);
-            /**TODO*/
+
+            showInformation(msgSys);
         }
     }
 
@@ -691,9 +679,10 @@ public class Controller {
     public void serverDeleteUser(int intUserID, int intEmployeeID, int intPictureID) {
         try {
 
-            MessageSystem msgSys = new MessageSystem("Data has been successfully deleted");
+            MessageSystem msgSys = new MessageSystem(mainActivity.getText(R.string.Suc_Delete).toString());
             msgSys.setType(MessageType.Suc_IUD);
-/**TODO*/
+
+            showInformation(msgSys);
             pepperDB.deleteEmployeeData(intEmployeeID, intPictureID, intUserID);
         } catch (Exception ex) {
             String err = "";
@@ -701,9 +690,11 @@ public class Controller {
             err += "";
 
 
-/**TODO*/
-            MessageSystem msgSys = new MessageSystem("Something went wrong. Error Message: " + ex.getMessage());
+
+            MessageSystem msgSys = new MessageSystem(mainActivity.getText(R.string.Error_Delete).toString() + ex.getMessage());
             msgSys.setType(MessageType.Error);
+
+            showInformation(msgSys);
         }
     }
 
@@ -762,7 +753,7 @@ public class Controller {
             err = ex.getMessage();
             err += "";
 
-            Toast.makeText(mainActivity, "Something went wrong please make sure everything is properly filled out.", Toast.LENGTH_LONG).show();
+            Toast.makeText(mainActivity, mainActivity.getText(R.string.Error_Something).toString() + ex.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
 
@@ -862,6 +853,32 @@ public class Controller {
     public void setEtNuTitle(EditText etNuTitle) {
         if (etNuTitle != null) {
             this.etNuTitle = etNuTitle;
+        }
+    }
+
+
+    public void showInformation(Message msgSys) {
+        String strMessage;
+        if (tvLoginInformation != null) {
+            try {
+                alertDialogBuilder = new AlertDialog.Builder(mainActivity);
+
+                        alertDialogBuilder.setTitle("PepperMRI");
+                        alertDialogBuilder.setMessage(msgSys.toString());
+                        alertDialogBuilder.setPositiveButton(mainActivity.getText(R.string.alertD_OK), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface arg0, int arg1) {
+                            }
+                        });
+
+                AlertDialog alertDialog = alertDialogBuilder.create();
+                alertDialog.show();
+
+            } catch (Exception ex) {
+                String err = "";
+                err = ex.getMessage();
+                err += "";
+            }
         }
     }
 

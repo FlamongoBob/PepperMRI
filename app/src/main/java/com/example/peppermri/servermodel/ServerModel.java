@@ -50,6 +50,12 @@ public class ServerModel {
         t = new Thread(r, "ServerSocket");
         t.start();
     }
+    public String getIP(){
+        return listener.getInetAddress().toString();
+    }
+    public String getPort(){
+        return ""+listener.getLocalPort();
+    }
 
     //public void disconnect
 

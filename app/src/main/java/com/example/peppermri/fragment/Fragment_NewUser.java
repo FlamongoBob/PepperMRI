@@ -42,7 +42,6 @@ public class Fragment_NewUser extends Fragment {
 
     }
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         //setHasOptionsMenu(true);
@@ -114,7 +113,7 @@ public class Fragment_NewUser extends Fragment {
         etNuUserName.setFocusable(false);
         controller.setEtNuUserName(etNuUserName);
 
-        RadioGroup rg_Nu_Confidential =  vRoot.findViewById(R.id.rg_Nu_Confidential);
+        RadioGroup rg_Nu_Confidential = vRoot.findViewById(R.id.rg_Nu_Confidential);
         controller.setRgConfidential(rg_Nu_Confidential);
 
         RadioButton rb_Nu_RConfidentalInfo = vRoot.findViewById(R.id.rb_Nu_RConfidentalInfo);
@@ -182,9 +181,7 @@ public class Fragment_NewUser extends Fragment {
 
                         etNuUserName.setText(strUserName);
 
-                        //etNuUserName.setText(strFirstName.substring(0, 2) + "." + strLastName.substring(0, 2) +random.nextInt(10));
-                    } //else if (intFirstNameLength >= 2 && intLastNameLength == 2) {
-                    //etNuUserName.setText(strFirstName.substring(0, 2) + "." + strLastName.substring(0, 2) +random.nextInt(10));
+                    }
                 }
 
             }
@@ -196,17 +193,4 @@ public class Fragment_NewUser extends Fragment {
 
 
     }
-/*
-
-    @Override
-    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        //inflater.inflate(R.menu.admin_options_menu, menu);
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        return manager.manageFragmentView(item);
-    }*/
 }

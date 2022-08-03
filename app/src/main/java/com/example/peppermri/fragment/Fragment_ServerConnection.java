@@ -2,16 +2,12 @@ package com.example.peppermri.fragment;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.example.peppermri.MainActivity;
@@ -59,8 +55,15 @@ public class Fragment_ServerConnection extends Fragment {
 
             btnStopServer = vRoot.findViewById(R.id.btnStopServer);
             btnStopServer.setOnClickListener(view -> {
+
                 mainActivity.stopServer();
                 getInformation();
+
+                TextView tvStatusServerConnectionIP = mainActivity.findViewById(R.id.tvStatusServerConnectionIP);
+                tvStatusServerConnectionIP.setText("- - - - - - - - - ");
+
+                TextView tvStatusServerConnectionPort = mainActivity.findViewById(R.id.tvStatusServerConnectionPort);
+                tvStatusServerConnectionPort.setText("- - - - - - - - - ");
             });
 
 
@@ -75,6 +78,7 @@ public class Fragment_ServerConnection extends Fragment {
 
     public void getInformation() {
         ImageView iv = mainActivity.findViewById(R.id.iv_Robot);
+        TextView tvStatusServerConnection = mainActivity.findViewById(R.id.tvStatusServerConnection);
 
         if (controller.isServerStarted) {
             iv.setColorFilter(mainActivity.getColor(R.color.connected_Green));
@@ -85,19 +89,11 @@ public class Fragment_ServerConnection extends Fragment {
             iv.setColorFilter(mainActivity.getColor(R.color.disconnected_red));
             tvStatusServerConnection.setText("Server is not running");
         }
-    }
 
-/*
-    @Override
-    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        inflater.inflate(R.menu.admin_options_menu, menu);
-        super.onCreateOptionsMenu(menu, inflater);
-    }
+        TextView tvStatusServerConnectionIP = mainActivity.findViewById(R.id.tvStatusServerConnectionIP);
+        tvStatusServerConnectionIP.setText(mainActivity.mService.getIP());
 
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        return manager.manageFragmentView(item);
+        TextView tvStatusServerConnectionPort = mainActivity.findViewById(R.id.tvStatusServerConnectionPort);
+        tvStatusServerConnectionPort.setText(mainActivity.mService.getPort());
     }
-*/
 }
