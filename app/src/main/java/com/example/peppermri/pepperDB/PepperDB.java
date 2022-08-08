@@ -169,7 +169,7 @@ public class PepperDB {
 
     }
 
-    public void getAllRoles(int intUserID) {
+    public void getAllRoles(boolean blnIsClient,int intUserID) {
 
         SQLiteDatabase db = this.myhelper.getReadableDatabase();
 
@@ -180,14 +180,17 @@ public class PepperDB {
         String strRole = "";
         int intRoleID = -1;
 
+        Controller controller = mainActivity.getController();
         if (cursorRole.moveToFirst()) {
-            Controller controller = mainActivity.getController();
             User user;
             do {
                 intRoleID = cursorRole.getInt(0);
                 strRole = cursorRole.getString(1);
-
-                controller.clientSendRoles(intRoleID, strRole, intUserID);
+                if(blnIsClient) {
+                    controller.clientSendRoles(intRoleID, strRole, intUserID);
+                }else {
+                    controller.populateArrRoles(strRole);
+                }
             } while (cursorRole.moveToNext());
             cursorRole.close();
         }

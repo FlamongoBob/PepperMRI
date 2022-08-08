@@ -1,12 +1,10 @@
 package com.example.peppermri.fragment;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -34,6 +32,7 @@ public class Fragment_NewUser extends Fragment {
     EditText etNuUserName;
     String strFirstName = "";
     String strLastName = "";
+    View vRoot;
 
     public Fragment_NewUser(Controller controller, MainActivity mainActivity, Manager manager) {
         this.mainActivity = mainActivity;
@@ -48,18 +47,26 @@ public class Fragment_NewUser extends Fragment {
         super.onCreate(savedInstanceState);
     }
 
+    public void resetFragment(MainActivity mainActivity) {
+        this.mainActivity = mainActivity;
+
+        LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        vRoot = inflater.inflate(R.layout.fragment__new_user, null);
+        initiateNewUserControls(vRoot);
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View vRoot = inflater.inflate(R.layout.fragment__new_user, container, false);
+        vRoot = inflater.inflate(R.layout.fragment__new_user, container, false);
         initiateNewUserControls(vRoot);
         return vRoot;
     }
 
 
-    private void initiateNewUserControls(View vRoot) {
+    public void initiateNewUserControls(View vRoot) {
         ImageButton ibNewPicture = vRoot.findViewById(R.id.ibNewPicture);
         controller.setIBNewPicture(ibNewPicture);
 
@@ -124,7 +131,7 @@ public class Fragment_NewUser extends Fragment {
         controller.setRb_Nu_NConfidentalInfo(rb_Nu_NConfidentalInfo);
 
         Spinner spNuRole = vRoot.findViewById(R.id.spNuRole);
-        controller.setSpRole(spNuRole);
+        controller.setSpNURole(spNuRole);
 
         Button btnAddNewUser = vRoot.findViewById(R.id.btnAddNewUser);
         btnAddNewUser.setOnClickListener(view -> {
@@ -135,15 +142,6 @@ public class Fragment_NewUser extends Fragment {
         btnNewUserClear.setOnClickListener(view -> {
             controller.clearNewUser();
         });
-
-        //Testing
-/*
-        etNuTitle.setText("Dr. Med. FMZ");
-        etNuFirstName.setText("Raphael");
-        etNuLastName.setText("Jungmair");
-        etNuPassword.setText("Admin");
-*/
-
     }
 
     private void generateUserName(String strFirstName, String strLastName) {

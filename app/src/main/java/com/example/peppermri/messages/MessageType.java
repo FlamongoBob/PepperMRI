@@ -16,7 +16,11 @@ public enum MessageType {
     , DeleteUser
     , Suc_IUD
     , AllUser
-    , Roles;
+    , Roles
+    , Choose
+    , Accept
+    , Deny
+    , Override;
 
 }
 

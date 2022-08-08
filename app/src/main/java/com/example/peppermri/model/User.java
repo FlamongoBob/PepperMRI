@@ -140,8 +140,4 @@ public class User {
     public void setStrPassword(String strPassword) {
         this.strPassword = strPassword;
     }
-
-
-
-
 }

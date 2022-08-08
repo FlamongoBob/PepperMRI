@@ -111,6 +111,18 @@ public abstract class Message {
                             message = new MessageSystem(parts[1]);
                             message.setType(MessageType.Patient);
 
+                        } else if (parts[0].equals(MessageType.Accept.toString())) {
+                            message = new MessageSystem(
+                                    parts[1]
+                            );
+                            message.setType(MessageType.Accept);
+
+                        } else if (parts[0].equals(MessageType.Deny.toString())) {
+                            message = new MessageSystem(
+                                    parts[1]
+                            );
+                            message.setType(MessageType.Deny);
+
                         } else if (parts[0].equals(MessageType.System.toString())) {
                             message = new MessageSystem(parts[1]);
                             message.setType(MessageType.System);

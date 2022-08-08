@@ -32,9 +32,12 @@
     <string name="Not_Logged_In_Title">Not Logged In</string>
     <string name="Not_Logged_In_Text">Please login before moving on to other pages.</string>
     <string name="Page_not_Changed">Page has not been changed.</string>
-    <string name="UserName">Username.</string>
+    <string name="UserName">Username</string>
     <string name="Password">Password</string>
+
     <string name="Login">Login</string>
+    <string name="Pepper">Pepper</string>
+    <string name="User_Management">User Management</string>
     <string name="PatientInformation">Patient Information</string>
     <string name="Profile">Profile</string>
     <string name="Server">Server</string>
@@ -77,12 +80,37 @@
     <string name="Delete_User_Text">Are You sure you want to delete this User from the System? </string>
     <string name="Suc_Delete_User">You have not deleted this User. </string>
 
-
     <string name="Error_Something">Something went wrong.  Please verify everything is completed correctly! Error Message: </string>
 
+    <string name="Already_Logged_In_Title">Already Logged In</string>
+    <string name="Already_Logged_In_Text">You are already logged in</string>
+    <string name="Request_Round">. Request Round</string>
 
-    <string name="Allready_Logged_In_Title">Allready Logged In</string>
-    <string name="Allready_Logged_In_Text">You are allready logged in</string>
+    <string name="Error_Start_Server">There was an error while starting the Server Error Message: </string>
+
+    <string name="Missing_Admin_Title">Missing Admin rights</string>
+    <string name="Missing_Admin_Text">You need the admin rights to select this</string>
+    <string name="Suc_LogOut">Successful LogOut</string>
+
+    <string name="Save_Changes">Save Changes</string>
+    <string name="DeleteUser">Delete User</string>
+
+    <string name="Next">Next</string>
+    <string name="Previous">Previous</string>
+    <string name="Refresh">Refresh</string>
+
+    <string name="Online">Online</string>
+    <string name="Offline">Offline</string>
+
+    <string name="IP">IP</string>
+    <string name="Port">Port</string>
+    <string name="StartServer">Start Server</string>
+    <string name="StopServer">Stop Server</string>
+
+
+    <string name="ServerNotStarted_Title">Server has not been started</string>
+    <string name="ServerNotStarted_Content">Server must be started before changing to the Pepper ChatBot</string>
+
 
 
 </resources>

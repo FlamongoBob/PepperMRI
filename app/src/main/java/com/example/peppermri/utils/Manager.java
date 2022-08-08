@@ -26,7 +26,7 @@ public class Manager extends AppCompatActivity {
 
 
     Fragment_Login frgLogin;
-    Fragment_NewUser frnUser;
+    Fragment_NewUser frgUser;
     Fragment_PepperInformation frgPepper;
     Fragment_UserManagement frgMgmt;
     Fragment_ServerConnection frgServer;
@@ -39,6 +39,9 @@ public class Manager extends AppCompatActivity {
     public FragmentManager frgMng;//= getFragmentManager();
     //Fragment activeFragment = frgSplashImage;
 
+
+
+
     public Manager(MainActivity mainActivity, Controller controller, FragmentManager frgMng) {
         this.mainActivity = mainActivity;
         this.controller = controller;
@@ -47,14 +50,14 @@ public class Manager extends AppCompatActivity {
         try {
 
             frgLogin = new Fragment_Login(this.controller, this.mainActivity, this);
-            frnUser = new Fragment_NewUser(this.controller, this.mainActivity, this);
+            frgUser = new Fragment_NewUser(this.controller, this.mainActivity, this);
             frgPepper = new Fragment_PepperInformation(this.controller, this.mainActivity, this);
             frgMgmt = new Fragment_UserManagement(this.controller, this.mainActivity, this);
             frgServer = new Fragment_ServerConnection(this.controller, this.mainActivity, this);
             activeFragment = frgLogin;
 
             frgMng.beginTransaction().add(R.id.container, frgPepper, "frgPepper").hide(frgPepper).commit();
-            frgMng.beginTransaction().add(R.id.container, frnUser, "frnUser").hide(frnUser).commit();
+            frgMng.beginTransaction().add(R.id.container, frgUser, "frgUser").hide(frgUser).commit();
             frgMng.beginTransaction().add(R.id.container, frgMgmt, "frgMgmt").hide(frgMgmt).commit();
             frgMng.beginTransaction().add(R.id.container, frgServer, "frgServer").hide(frgServer).commit();
             frgMng.beginTransaction().add(R.id.container, frgLogin, "frgLogin").commit();
@@ -72,12 +75,11 @@ public class Manager extends AppCompatActivity {
 
             switch (menuItem.getItemId()) {
                 case R.id.New_User:
-                    try {
                         if (controller.isLoggedIn) {
                             if (controller.getIntRoleID() == 1) {
-                                if (!activeFragment.getTag().equals(frgMng.findFragmentByTag("frnUser").getTag())) {
-                                    frgMng.beginTransaction().hide(activeFragment).show(frnUser).commit();
-                                    activeFragment = frnUser;
+                                if (!activeFragment.getTag().equals(frgMng.findFragmentByTag("frgUser").getTag())) {
+                                    frgMng.beginTransaction().hide(activeFragment).show(frgUser).commit();
+                                    activeFragment = frgUser;
                                     return true;
                                 }
 
@@ -90,13 +92,8 @@ public class Manager extends AppCompatActivity {
                         }
 
                         return false;
-                    } catch (Exception ex) {
-                        String err = ex.getMessage();
-                        err += "";
-                    }
-                    break;
+
                 case R.id.UserManagement:
-                    try {
                         if (controller.isLoggedIn) {
                             if (controller.getIntRoleID() == 1) {
                                 if (!activeFragment.getTag().equals(frgMng.findFragmentByTag("frgMgmt").getTag())) {
@@ -117,13 +114,9 @@ public class Manager extends AppCompatActivity {
                             alertNotLoggedIn();
                         }
 
-                    } catch (Exception ex) {
-                        String err = ex.getMessage();
-                        err += "";
-                    }
-                    break;
+                    return false;
+
                 case R.id.Login:
-                    try {
                         if (!activeFragment.getTag().equals(frgMng.findFragmentByTag("frgLogin").getTag())) {
                             frgMng.beginTransaction().hide(activeFragment).show(frgLogin).commit();
                             activeFragment = frgLogin;
@@ -133,19 +126,14 @@ public class Manager extends AppCompatActivity {
 
                         return false;
 
-                    } catch (Exception ex) {
-                        String err = ex.getMessage();
-                        err += "";
-                    }
-
-                    break;
                 case R.id.LogOut:
-                    try {
                         if (controller.isLoggedIn) {
-                            /**TODO Logout*/
+                            frgMng.beginTransaction().hide(activeFragment).show(frgLogin).commit();
+                            activeFragment = frgLogin;
+                            controller.serverLogout();
+                            frgLogin.setTvLogOutText();
+                            frgLogin.isLoggedIn = false;
 
-                            frgMng.beginTransaction().hide(activeFragment).show(frgPepper).commit();
-                            activeFragment = frgPepper;
                         } else {
 
                             alertNotLoggedIn();
@@ -153,13 +141,7 @@ public class Manager extends AppCompatActivity {
 
                         return false;
 
-                    } catch (Exception ex) {
-                        String err = ex.getMessage();
-                        err += "";
-                    }
-                    break;
                 case R.id.Server:
-                    try {
 
                         if (controller.isLoggedIn) {
                             if (controller.getIntRoleID() == 1) {
@@ -170,25 +152,32 @@ public class Manager extends AppCompatActivity {
                                     return true;
                                 }
                             }
-
                         }
                         return false;
 
-                    } catch (Exception ex) {
-                        String err = ex.getMessage();
-                        err += "";
-                    }
-                    break;
                 case R.id.Pepper:
-                    try {
+                        if(mainActivity.checkServerStatus()) {
+                            Intent intent = new Intent(mainActivity, MainActivity_Pepper.class);
 
-                        Intent intent = new Intent(mainActivity, MainActivity_Pepper.class);
-                        mainActivity.startActivity(intent);
-                    } catch (Exception ex) {
-                        String err = ex.getMessage();
-                        err += "";
-                    }
+                            controller.serverLogout();
+                            mainActivity.maUnbindService();
+                            mainActivity.startActivity(intent);
+
+
+                        }else {
+
+                            NotificationUtil.createChannel(
+                                    mainActivity
+                                    , "Server Not Started"
+                            );
+
+                            NotificationUtil.setNotification(mainActivity
+                                    , mainActivity.getText(R.string.ServerNotStarted_Title).toString()
+                                    , mainActivity.getText(R.string.ServerNotStarted_Content).toString()
+                            );
+                        }
                     break;
+
                 default:
 
                     return super.onOptionsItemSelected(menuItem);
@@ -202,11 +191,34 @@ public class Manager extends AppCompatActivity {
         return super.onOptionsItemSelected(menuItem);
     }
 
+    public void resetMainActivity(MainActivity mainActivity){
+        this.mainActivity = mainActivity;
+
+        frgMng = mainActivity.getSupportFragmentManager();
+
+        frgMng.beginTransaction().add(R.id.container, frgPepper, "frgPepper").hide(frgPepper).commit();
+        frgPepper.resetFragment(mainActivity);
+
+        frgMng.beginTransaction().add(R.id.container, frgUser, "frgUser").hide(frgUser).commit();
+        frgUser.resetFragment(mainActivity);
+
+        frgMng.beginTransaction().add(R.id.container, frgMgmt, "frgMgmt").hide(frgMgmt).commit();
+        frgMgmt.resetFragment(mainActivity);
+
+        frgMng.beginTransaction().add(R.id.container, frgServer, "frgServer").hide(frgServer).commit();
+        frgServer.resetFragment(mainActivity);
+        frgServer.getInformation();
+
+        frgMng.beginTransaction().add(R.id.container, frgLogin, "frgLogin").hide(frgLogin).commit();
+        frgLogin.resetFragment(mainActivity);
+    }
+
+
     public void alertAdminRights() {
 
 
-        alertDialogBuilder.setTitle("Missing Admin rights");
-        alertDialogBuilder.setMessage("You need the admin rights to select this");
+        alertDialogBuilder.setTitle(mainActivity.getText(R.string.Missing_Admin_Title));
+        alertDialogBuilder.setMessage(mainActivity.getText(R.string.Missing_Admin_Text));
         alertDialogBuilder.setPositiveButton(mainActivity.getText(R.string.alertD_OK), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface arg0, int arg1) {
@@ -230,11 +242,16 @@ public class Manager extends AppCompatActivity {
         alertDialog.show();
     }
 
-    public void replaceFragment(Fragment fragment) {
-        //frgMng.beginTransaction().replace(R.id.stateFragmentHolder, fragment).commit();
+    public void goBack(MainActivity_Pepper mainActivity_pepper){
+
+        Intent intent = new Intent(mainActivity_pepper, MainActivity.class);
+        mainActivity_pepper.maUnbindService();
+        mainActivity_pepper.startActivity(intent);
     }
 
-    public void removeLastFragment(Fragment lastFragment) {
-        frgMng.beginTransaction().remove(lastFragment).commit();
+    public void goToLogin(){
+        frgMng.beginTransaction().hide(activeFragment).show(frgLogin).commit();
+        activeFragment = frgLogin;
     }
+
 }

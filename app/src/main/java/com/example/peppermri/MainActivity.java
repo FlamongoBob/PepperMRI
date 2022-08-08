@@ -7,32 +7,21 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.Button;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.aldebaran.qi.sdk.QiContext;
-import com.aldebaran.qi.sdk.RobotLifecycleCallbacks;
-import com.aldebaran.qi.sdk.design.activity.RobotActivity;
 import com.example.peppermri.Service.LocalService;
 import com.example.peppermri.controller.Controller;
-import com.example.peppermri.fragment.Fragment_Login;
-import com.example.peppermri.fragment.Fragment_NewUser;
-import com.example.peppermri.fragment.Fragment_PepperInformation;
-import com.example.peppermri.fragment.Fragment_UserManagement;
 import com.example.peppermri.pepperDB.PepperDB;
 import com.example.peppermri.utils.Manager;
-import com.google.android.material.navigation.NavigationView;
 
 
-public class MainActivity extends AppCompatActivity{//extends RobotActivity implements RobotLifecycleCallbacks {
+public class MainActivity extends AppCompatActivity {//extends RobotActivity implements RobotLifecycleCallbacks {
     PepperDB pepperDB;
     Controller controller;
-
+    MainActivity mainActivity = this;
     Manager manager;
     public LocalService mService;
     boolean mBound = false;
@@ -42,27 +31,36 @@ public class MainActivity extends AppCompatActivity{//extends RobotActivity impl
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        pepperDB = new PepperDB(this, this);
-        this.controller = new Controller(pepperDB, this);
-
-        manager = new Manager(this, controller, this.getSupportFragmentManager());
-
-
-        //TextView tv = findViewById(R.id.tvWorld);
-        /*Button btn = findViewById(R.id.button);
-        btn.setOnClickListener(view -> {
-
-            controller.adminTestMessage(tv);
-        });*/
     }
 
-    public void startServer(){
+
+    public void safekeep() {
+        mService.safeKeep(controller, pepperDB, manager);
+    }
+
+
+    public void retrieve() {
+        try {
+            this.controller = mService.getController();
+            this.pepperDB = mService.getPepperDB();
+            this.manager = mService.getManager();
+            manager.resetMainActivity(this);
+           // this.manager = new Manager(this, this.controller, this.getSupportFragmentManager());
+            manager.goToLogin();
+
+        }catch (Exception ex){
+            String err ="";
+            err = ex.getMessage();
+            err+="";
+        }
+    }
+
+    public void startServer() {
 
         mService.startServer(this.controller, this);
     }
 
-    public void stopServer(){
+    public void stopServer() {
 
         mService.stopServer();
     }
@@ -85,11 +83,9 @@ public class MainActivity extends AppCompatActivity{//extends RobotActivity impl
         super.onStart();
 
         try {
-            // Bind to LocalService
-            Intent intent = new Intent(this, LocalService.class);
-            startService(intent);
-            this.bindService(intent, connection, Context.BIND_AUTO_CREATE);
 
+            Intent newIntent = new Intent(this, LocalService.class);
+            mainActivity.bindService(newIntent, connection, Context.BIND_AUTO_CREATE);
 
         } catch (Exception ex) {
             String err = "";
@@ -108,12 +104,20 @@ public class MainActivity extends AppCompatActivity{//extends RobotActivity impl
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        // mService.appClosedDisconnect();
+        mService.appClosedDisconnect();
         unbindService(connection);
         mBound = false;
 
     }
 
+    public void maUnbindService() {
+
+        unbindService(connection);
+    }
+
+    public boolean checkServerStatus() {
+        return mService.checkServer();
+    }
 
     /**
      * Defines callbacks for service binding, passed to bindService()
@@ -126,8 +130,16 @@ public class MainActivity extends AppCompatActivity{//extends RobotActivity impl
             // We've bound to LocalService, cast the IBinder and get LocalService instance
             LocalService.LocalBinder binder = (LocalService.LocalBinder) service;
             mService = binder.getService();
-
             mBound = true;
+
+            if (mService.isRunning()) {
+                retrieve();
+            } else {
+                initiateObjects();
+                Intent newIntent = new Intent(mainActivity, LocalService.class);
+                startService(newIntent);
+                safekeep();
+            }
         }
 
         @Override
@@ -136,6 +148,12 @@ public class MainActivity extends AppCompatActivity{//extends RobotActivity impl
         }
     };
 
+    public void initiateObjects() {
+
+        pepperDB = new PepperDB(this, this);
+        this.controller = new Controller(pepperDB, this);
+        manager = new Manager(this, controller, this.getSupportFragmentManager());
+    }
 
     public Controller getController() {
         return controller;

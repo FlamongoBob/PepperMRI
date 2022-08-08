@@ -1,16 +1,13 @@
 package com.example.peppermri.fragment;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -30,15 +27,23 @@ public class Fragment_Login extends Fragment {
     Controller controller;
     Button btnLogin;
     MainActivity mainActivity;
-
+    View vRoot;
     Manager manager;
     public boolean isLoggedIn = false;
+    TextView tvLoginInformation;
 
     public Fragment_Login(Controller controller, MainActivity mainActivity, Manager manager) {
         this.mainActivity = mainActivity;
         this.controller = controller;
         this.manager = manager;
+    }
 
+    public void resetFragment(MainActivity mainActivity){
+        this.mainActivity = mainActivity;
+
+        LayoutInflater inflater = (LayoutInflater)   getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        vRoot = inflater.inflate(R.layout.fragment__login, null);
+        initiateLoginControls(vRoot);
     }
 
     @Override
@@ -51,7 +56,7 @@ public class Fragment_Login extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View vRoot = inflater.inflate(R.layout.fragment__login, container, false);
+        vRoot = inflater.inflate(R.layout.fragment__login, container, false);
 
         initiateLoginControls(vRoot);
         return vRoot;
@@ -71,7 +76,7 @@ public class Fragment_Login extends Fragment {
 
             btnLogin = vRoot.findViewById(R.id.btnLogin);
             btnLogin.setOnClickListener(view -> {
-                TextView tvLoginInformation = vRoot.findViewById(R.id.tvLoginInformation);
+                tvLoginInformation = vRoot.findViewById(R.id.tvLoginInformation);
                 controller.setTvLoginInformation(tvLoginInformation);
                 if (!isLoggedIn) {
                     isLoggedIn = controller.serverCheckLoginCredential(etLoginUserName.getText().toString()
@@ -79,8 +84,8 @@ public class Fragment_Login extends Fragment {
                 } else {
 
                     alertDialogBuilder = new AlertDialog.Builder(mainActivity);
-                    alertDialogBuilder.setTitle(R.string.Allready_Logged_In_Title);
-                    alertDialogBuilder.setMessage(R.string.Allready_Logged_In_Text);
+                    alertDialogBuilder.setTitle(R.string.Already_Logged_In_Title);
+                    alertDialogBuilder.setMessage(R.string.Already_Logged_In_Text);
                     alertDialogBuilder.setPositiveButton(R.string.alertD_OK, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface arg0, int arg1) {
@@ -103,4 +108,9 @@ public class Fragment_Login extends Fragment {
             err = ex.getMessage();
         }
     }
+
+    public void setTvLogOutText(){
+        tvLoginInformation.setText(R.string.Suc_LogOut);
+    }
+
 }

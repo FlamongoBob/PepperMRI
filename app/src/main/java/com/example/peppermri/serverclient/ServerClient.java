@@ -143,7 +143,7 @@ public class ServerClient {
 
                                             user = controller.getNewestUser();
 
-                                            MessageSystem messageSystem = new MessageSystem("You have successfully Connected to Pepper!");
+                                            MessageSystem messageSystem = new MessageSystem(mainActivity.getString(R.string.msg_SucLogin));
                                             messageSystem.setType(MessageType.Successful_LogIn);
                                             messageSystem.send(socket);
 
@@ -209,7 +209,17 @@ public class ServerClient {
 
                                             controller.clientGetAllEmployeeData(intUserID);
 
+                                        } else if (msg.getType().equals(MessageType.Accept)) {
+
+                                            controller.responseConfidentialInfo(intUserID, MessageType.Accept);
+
+                                        } else if (msg.getType().equals(MessageType.Deny)) {
+
+                                            controller.responseConfidentialInfo(intUserID, MessageType.Deny);
+
                                         }
+
+
                                     } else if (msg instanceof MessageI) {
 
                                         controller.clientInsertUser((MessageI) msg, serverClient.intUserID);

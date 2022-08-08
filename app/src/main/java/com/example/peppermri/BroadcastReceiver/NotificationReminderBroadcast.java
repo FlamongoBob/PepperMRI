@@ -31,7 +31,7 @@ public class NotificationReminderBroadcast extends BroadcastReceiver {
                         , contentIntent
                         , PendingIntent.FLAG_IMMUTABLE);
 
-        String title = Global.getInstance().getContent();
+        String title = Global.getInstance().getTitle();
         String content = Global.getInstance().getContent();
 
         // Build the notification

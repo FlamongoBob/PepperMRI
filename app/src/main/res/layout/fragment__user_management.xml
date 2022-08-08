@@ -96,7 +96,7 @@
                 android:minHeight="60dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/ibUMPicture" />
+                app:layout_constraintTop_toBottomOf="@+id/ivUMPicture" />
 
             <Spinner
                 android:id="@+id/spUMRole"
@@ -110,8 +110,8 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/etUMLastName" />
 
-            <ImageButton
-                android:id="@+id/ibUMPicture"
+            <ImageView
+                android:id="@+id/ivUMPicture"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
 
@@ -137,7 +137,7 @@
                 android:layout_marginTop="20dp"
                 android:layout_marginEnd="10dp"
                 android:minHeight="60dp"
-                android:text="Save Changes"
+                android:text="@string/Save_Changes"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/etUMPassword" />
@@ -150,7 +150,7 @@
                 android:layout_marginTop="20dp"
                 android:layout_marginEnd="10dp"
                 android:minHeight="60dp"
-                android:text="Benutzer Löschen"
+                android:text="@string/DeleteUser"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toStartOf="parent"
@@ -169,7 +169,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/spUMRole">
 
                 <RadioButton
-                    android:id="@+id/rb_ReceiveUM"
+                    android:id="@+id/rb_RConfidentialUM"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:minHeight="60dp"
@@ -178,7 +178,7 @@
                     tools:layout_editor_absoluteY="461dp" />
 
                 <RadioButton
-                    android:id="@+id/rb_Not_ReceiveUM"
+                    android:id="@+id/rb_NConfidentialUM"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:minHeight="60dp"
@@ -196,10 +196,27 @@
                 android:layout_marginBottom="60dp"
                 android:minWidth="80dp"
                 android:minHeight="60dp"
-                android:text="Nächster"
+                android:text="@string/Next"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/btnUMDeleteUser" />
+
+            <Button
+                android:id="@+id/btnRefresh"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="225dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="225dp"
+                android:layout_marginBottom="60dp"
+                android:minWidth="80dp"
+                android:minHeight="60dp"
+                android:text="@string/Refresh"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/btnUMNext"
+                app:layout_constraintStart_toEndOf="@+id/btnUMPrevious"
+                app:layout_constraintTop_toBottomOf="@+id/btnUMDeleteUser"
+                app:layout_constraintVertical_bias="0.0" />
 
             <Button
                 android:id="@+id/btnUMPrevious"
@@ -210,7 +227,7 @@
                 android:layout_marginBottom="60dp"
                 android:minWidth="80dp"
                 android:minHeight="60dp"
-                android:text="Vorher"
+                android:text="@string/Previous"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/btnUMDeleteUser" />

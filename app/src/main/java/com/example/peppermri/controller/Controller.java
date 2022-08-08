@@ -1,13 +1,15 @@
 package com.example.peppermri.controller;
 
-import android.Manifest;
-import android.app.Activity;
 import android.content.DialogInterface;
-import android.content.pm.PackageManager;
 import android.content.res.Resources;
-import android.graphics.Color;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Base64;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
@@ -15,8 +17,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
 import com.example.peppermri.MainActivity;
 import com.example.peppermri.R;
@@ -36,7 +36,6 @@ import com.example.peppermri.server.Server;
 
 import java.net.InetAddress;
 import java.util.ArrayList;
-import java.util.List;
 
 public class Controller {
 
@@ -49,7 +48,7 @@ public class Controller {
     PepperDB pepperDB;
     MainActivity mainActivity;
     final private int intPortNr = 6666;//80; //= 10284;
-    final private String strIPAdress  = "127.10.10.15"; //= "10.0.2.15";
+    final private String strIPAdress = "127.10.10.15"; //= "10.0.2.15";
 
     private ArrayList<User> clientArrAllUser = new ArrayList<>();
     Encryption e = new Encryption();
@@ -57,6 +56,8 @@ public class Controller {
     public Controller(PepperDB pepperDB, MainActivity mainActivity) {
         this.mainActivity = mainActivity;
         this.pepperDB = pepperDB;
+
+        this.alertDialogBuilder = new AlertDialog.Builder(mainActivity);
         try {
 
             //InetAddress inetAddress = InetAddress.getByName(strIPAdress);
@@ -73,7 +74,6 @@ public class Controller {
         try {
 
             server = new Server(intPortNr, controller, inetAddress, mainActivity);
-
 
         } catch (Exception ex) {
             isServerStarted = false;
@@ -119,22 +119,274 @@ public class Controller {
         }
     }
 
-    public void sendPatientInformation(String strPatientInfo) {
-        MessageSystem msgSys = new MessageSystem(strPatientInfo);
-        msgSys.setType(MessageType.Patient);
+    /**
+     * PatientInfo
+     */
 
-        int intUserID = -1;
+    String strBufferPatientInfo;
+    int intDeniedCounter = 0, intRequestRound = 1, intPossibleResponse = 0;
+    boolean blnHasAccepted = false, hasChoiceStarted = false;
 
-        for (int i = 0; i < arrLoggedInUsers.size(); i++) {
-            User user = arrLoggedInUsers.get(i);
+    RadioButton rbQuestion1_Yes, rbQuestion1_No, rbQuestion2_Yes, rbQuestion2_No, rbQuestion3_Yes, rbQuestion3_No;
+    Button btnDone;
+    ImageView ivEmployee;
+    TextView tvEmployeeTitle, tvEmployeeFirstName, tvEmployeeLastName, tvEmployeeInfo, tvQuestion1, tvQuestion2, tvQuestion3;
 
-            if (user.getIntGetsConfidentialInfo() == 1) {
-                server.sendMessage(msgSys, user.getIntUserID());
-            }
-        }
+
+    public void controlsShowOrHideQuestions(int intVisibilityID) {
+
+        tvQuestion1.setVisibility(intVisibilityID);
+        tvQuestion2.setVisibility(intVisibilityID);
+        tvQuestion3.setVisibility(intVisibilityID);
+
+        //RadioButton
+        rbQuestion1_Yes.setVisibility(intVisibilityID);
+        rbQuestion1_No.setVisibility(intVisibilityID);
+
+        rbQuestion2_Yes.setVisibility(intVisibilityID);
+        rbQuestion2_No.setVisibility(intVisibilityID);
+
+        rbQuestion3_Yes.setVisibility(intVisibilityID);
+        rbQuestion3_No.setVisibility(intVisibilityID);
 
     }
 
+    public void controlsShowOrHideEmployee(int intVisibilityID) {
+
+        ivEmployee.setVisibility(intVisibilityID);
+        tvEmployeeTitle.setVisibility(intVisibilityID);
+        tvEmployeeFirstName.setVisibility(intVisibilityID);
+        tvEmployeeLastName.setVisibility(intVisibilityID);
+    }
+
+    public void resetEmployeeAndBool() {
+            blnHasAccepted = false;
+            hasChoiceStarted = false;
+
+        tvEmployeeTitle.setText("");
+        tvEmployeeFirstName.setText("");
+        tvEmployeeLastName.setText("");
+    }
+
+    public void controlsShowOrHideAll(int intVisibilityID) {
+        controlsShowOrHideQuestions(intVisibilityID);
+        controlsShowOrHideEmployee(intVisibilityID);
+    }
+
+
+    public void checkConfidentialInfoSender(int intRequestRound) {
+        for (int i = 0; i < arrLoggedInUsers.size(); i++) {
+            User user = arrLoggedInUsers.get(i);
+            if (user.getIntGetsConfidentialInfo() == 1) {
+                int intUserID = user.getIntUserID();
+                hasChoiceStarted  =true;
+                MessageSystem msgSys = new MessageSystem(intRequestRound + mainActivity.getText(R.string.Request_Round).toString());
+                msgSys.setType(MessageType.Choose);
+                server.sendMessage(msgSys, intUserID);
+            }
+        }
+        hasChoiceStarted = true;
+    }
+
+    public void responseConfidentialInfo(int intUserID, MessageType msgType) {
+        if (hasChoiceStarted) {
+            if (msgType == MessageType.Accept && !blnHasAccepted) {
+                blnHasAccepted = sendPatientInformation(intUserID);
+
+                if (blnHasAccepted) {
+                    setEmployeeReceivesInfo(intUserID);
+                    resetCounters();
+                }
+
+            } else if (msgType == MessageType.Accept && blnHasAccepted | msgType == MessageType.Deny && blnHasAccepted) {
+                resetCounters();
+            } else if (!blnHasAccepted && msgType == MessageType.Deny) {
+
+                if (intPossibleResponse == 0) {
+                    for (int i = 0; i < arrLoggedInUsers.size(); i++) {
+                        User user = arrLoggedInUsers.get(i);
+                        if (user.getIntGetsConfidentialInfo() == 1) {
+                            intPossibleResponse++;
+                        }
+                    }
+                }
+
+                if (intPossibleResponse == intDeniedCounter) {
+                    intRequestRound++;
+                    checkConfidentialInfoSender(intRequestRound);
+                }
+            }
+        }
+    }
+
+    public void resetCounters() {
+        intPossibleResponse = 0;
+        intDeniedCounter = 0;
+        intRequestRound = 1;
+        hasChoiceStarted=false;
+    }
+
+    public boolean sendPatientInformation(int intUserID) {
+        try {
+            /**TODO boolReturn*/
+            MessageSystem msgSys = new MessageSystem(
+                    setPatientInfoMessageText()
+            );
+            msgSys.setType(MessageType.Patient);
+
+            server.sendMessage(msgSys, intUserID);
+            return true;
+        } catch (Exception ex) {
+
+            String err = "";
+            err = ex.getMessage();
+            err = "";
+            return false;
+        }
+    }
+
+    public String setPatientInfoMessageText() {
+
+        String strMessageCode = "";
+
+        if (rbQuestion1_Yes.isChecked()) {
+            strMessageCode += "1";
+        } else {
+            strMessageCode += "0";
+        }
+
+        if (rbQuestion2_Yes.isChecked()) {
+            strMessageCode += "1";
+        } else {
+            strMessageCode += "0";
+        }
+
+        if (rbQuestion3_Yes.isChecked()) {
+            strMessageCode += "1";
+        } else {
+            strMessageCode += "0";
+        }
+
+        return strMessageCode;
+    }
+
+
+    public void setEmployeeReceivesInfo(int intUserID) {
+        User user = getUserFromArrLoggedIn(intUserID);
+        if (user != null) {
+            String strEmployeeTitle = user.getStrTitle();
+            tvEmployeeTitle.setText(strEmployeeTitle);
+
+            String strEmployeeFirstName = user.getStrFirstname();
+            tvEmployeeFirstName.setText(strEmployeeFirstName);
+
+            String strEmployeeLastName = user.getStrLastname();
+            tvEmployeeLastName.setText(strEmployeeLastName);
+
+            String strEmployeePicture = user.getStrPicture();
+            Bitmap bmPicture = StringToBitMap(strEmployeePicture);
+            if (bmPicture != null) {
+                setPicture(bmPicture, ivEmployee);
+            }
+        }
+    }
+
+    public Bitmap StringToBitMap(String encodedString) {
+        try {
+            String strSubstring = encodedString.substring(0, 9);
+            if (!strSubstring.equals("NoPicture")) {
+                if (!encodedString.isEmpty()) {
+                    byte[] encodeByte = Base64.decode(encodedString, Base64.DEFAULT);
+                    Bitmap bitmap = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
+                    return bitmap;
+
+                }
+            }
+        } catch (Exception e) {
+            e.getMessage();
+        }
+        return null;
+    }
+
+    public void setPicture(Bitmap bmpPicture, ImageView ivPicture) {
+        if (ivPicture != null && bmpPicture != null) {
+            ivPicture.setImageBitmap(bmpPicture);
+        }
+    }
+
+    public User getUserFromArrLoggedIn(int intUserID) {
+        for (int i = 0; i < arrLoggedInUsers.size(); i++) {
+            User user = arrLoggedInUsers.get(i);
+            if (user.getIntUserID() == intUserID) {
+                return user;
+            }
+        }
+        return null;
+    }
+
+    public boolean isBlnHasAccepted() {
+        return blnHasAccepted;
+    }
+
+    public void setIvEmployee(ImageView ivEmployee) {
+        this.ivEmployee = ivEmployee;
+    }
+
+    public void setTvEmployeeTitle(TextView tvEmployeeTitle) {
+        this.tvEmployeeTitle = tvEmployeeTitle;
+    }
+
+    public void setTvEmployeeFirstName(TextView tvEmployeeFirstName) {
+        this.tvEmployeeFirstName = tvEmployeeFirstName;
+    }
+
+    public void setTvEmployeeLastName(TextView tvEmployeeLastName) {
+        this.tvEmployeeLastName = tvEmployeeLastName;
+    }
+
+    public void setTvEmployeeInfo(TextView tvEmployeeInfo) {
+        this.tvEmployeeInfo = tvEmployeeInfo;
+    }
+
+    public void setTvQuestion1(TextView tvQuestion1) {
+        this.tvQuestion1 = tvQuestion1;
+    }
+
+    public void setTvQuestion2(TextView tvQuestion2) {
+        this.tvQuestion2 = tvQuestion2;
+    }
+
+    public void setTvQuestion3(TextView tvQuestion3) {
+        this.tvQuestion3 = tvQuestion3;
+    }
+
+    public void setRbQuestion1_Yes(RadioButton rbQuestion1_Yes) {
+        this.rbQuestion1_Yes = rbQuestion1_Yes;
+    }
+
+    public void setRbQuestion1_No(RadioButton rbQuestion1_No) {
+        this.rbQuestion1_No = rbQuestion1_No;
+    }
+
+    public void setRbQuestion2_Yes(RadioButton rbQuestion2_Yes) {
+        this.rbQuestion2_Yes = rbQuestion2_Yes;
+    }
+
+    public void setRbQuestion2_No(RadioButton rbQuestion2_No) {
+        this.rbQuestion2_No = rbQuestion2_No;
+    }
+
+    public void setRbQuestion3_Yes(RadioButton rbQuestion3_Yes) {
+        this.rbQuestion3_Yes = rbQuestion3_Yes;
+    }
+
+    public void setRbQuestion3_No(RadioButton rbQuestion3_No) {
+        this.rbQuestion3_No = rbQuestion3_No;
+    }
+
+    /**
+     * Client Response Messages
+     */
     public void adminTestMessage(TextView tv) {
         //TextView tv2 = tv ;
         ///tv2.setText(pepperDB.Check());
@@ -250,7 +502,7 @@ public class Controller {
                     , strUserName
                     , strPassword);
 
-            MessageSystem msgSys = new MessageSystem( mainActivity.getText(R.string.Suc_Update).toString());
+            MessageSystem msgSys = new MessageSystem(mainActivity.getText(R.string.Suc_Update).toString());
             msgSys.setType(MessageType.Suc_IUD);
             server.sendMessage(msgSys, intUserID);
 
@@ -260,7 +512,7 @@ public class Controller {
             err += "";
 
 
-            MessageSystem msgSys = new MessageSystem( mainActivity.getText(R.string.Error_UpdateUser).toString() + ex.getMessage());
+            MessageSystem msgSys = new MessageSystem(mainActivity.getText(R.string.Error_UpdateUser).toString() + ex.getMessage());
             msgSys.setType(MessageType.Error);
             server.sendMessage(msgSys, intSenderUserID);
         }
@@ -326,7 +578,7 @@ public class Controller {
     }
 
     public void clientPrepareRoles(int intUserID) {
-        pepperDB.getAllRoles(intUserID);
+        pepperDB.getAllRoles(true, intUserID);
     }
 
 
@@ -345,7 +597,7 @@ public class Controller {
     String strUMPicture;
     Spinner spUMRole;
     int intUMRoleID, intUserID, intEmployeeID, intPictureID;
-    ImageButton ibUMPicture;
+    ImageView ivUMPicture;
     RadioGroup rgConfidentialUM;
     RadioButton rb_RConfidentialUM, rb_NConfidentialUM;
     User userCurrentSelectedUm;
@@ -354,25 +606,80 @@ public class Controller {
     ArrayList<String> arrRoles = new ArrayList<>();
     public static final int REQUEST_ID_MULTIPLE_PERMISSIONS = 101;
 
+    public void populateArrRoles(String strRole) {
+        arrRoles.add(strRole);
+    }
 
     public void serverCollectAllUser(User user) {
         serverArrAllUser.add(user);
     }
 
+    public void serverGetRoles() {
+        arrRoles.clear();
+        pepperDB.getAllRoles(false, -1);
+    }
+
 
     public void serverGetAllEmployeeData() {
-        pepperDB.selectAllEmployeeData(false, currentUser.getIntUserID());
+        serverArrAllUser.clear();
+        pepperDB.selectAllEmployeeData(false, loggedInUser.getIntUserID());
+    }
+
+
+    public int starFillUserManagement(int intPos) {
+        if (intPos >= serverArrAllUser.size()) {
+            intPos = 0;
+        }
+
+        if (intPos < 0) {
+
+            intPos = serverArrAllUser.size() - 1;
+        }
+
+        userCurrentSelectedUm = serverArrAllUser.get(intPos);
+        populateUserManagementControlls(userCurrentSelectedUm);
+        return intPos;
+    }
+
+    private void populateUserManagementControlls(User user) {
+        etUMTitle.setText(user.getStrTitle());
+        etUMFirstName.setText(user.getStrFirstname());
+        etUMLastName.setText(user.getStrLastname());
+
+
+        String strEmployeePicture = user.getStrPicture();
+        Bitmap bmPicture = StringToBitMap(strEmployeePicture);
+        if (bmPicture != null) {
+            setPicture(bmPicture, ivUMPicture);
+        }
+
+        etUMPassword.setText(user.getStrPassword());
+        etUMUserName.setText(user.getStrUserName());
+
+        if (user.getIntRoleID() == 2) {
+            spUMRole.setSelection(arrRoles.indexOf("User"));
+        } else {
+
+            spUMRole.setSelection(arrRoles.indexOf("Admin"));
+        }
+
+        if (user.getIntConfidentialID() == 1) {
+            rb_RConfidentialUM.setChecked(true);
+        } else {
+
+            rb_NConfidentialUM.setChecked(true);
+        }
 
     }
 
+
+    //User Management Setters
 
     public void setEtUMFirstName(EditText etUMFirstName) {
         if (etUMFirstName != null) {
             this.etUMFirstName = etUMFirstName;
         }
     }
-
-    //User Management Setters
 
     public void setEtUMTitle(EditText etUMTitle) {
         if (etUMTitle != null) {
@@ -401,94 +708,23 @@ public class Controller {
     public void setSpUMRole(Spinner spUMRole) {
         if (spUMRole != null) {
             this.spUMRole = spUMRole;
-        }
-    }
-
-    public static boolean checkAndRequestPermissions(final Activity context) {
-        int WExtstorePermission = ContextCompat.checkSelfPermission(context
-                , Manifest.permission.WRITE_EXTERNAL_STORAGE);
-
-        int cameraPermission = ContextCompat.checkSelfPermission(context
-                , Manifest.permission.CAMERA);
-
-        int intNotificationPermission = ContextCompat.checkSelfPermission(context
-                , Manifest.permission.POST_NOTIFICATIONS);
-
-        List<String> listPermissionsNeeded = new ArrayList<>();
-        if (cameraPermission != PackageManager.PERMISSION_GRANTED) {
-            listPermissionsNeeded.add(Manifest.permission.CAMERA);
-        }
-
-        if (WExtstorePermission != PackageManager.PERMISSION_GRANTED) {
-            listPermissionsNeeded
-                    .add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        }
-
-        if (intNotificationPermission != PackageManager.PERMISSION_GRANTED) {
-            listPermissionsNeeded
-                    .add(Manifest.permission.POST_NOTIFICATIONS);
-        }
-
-        if (!listPermissionsNeeded.isEmpty()) {
-            ActivityCompat.requestPermissions(context, listPermissionsNeeded
-                            .toArray(new String[listPermissionsNeeded.size()]),
-                    REQUEST_ID_MULTIPLE_PERMISSIONS);
-            return false;
-        }
-        return true;
-    }
-
-    public void setUMNewPicture(ImageButton ibUMPicture) {
-        if (ibUMPicture != null) {
-            this.ibUMPicture = ibUMPicture;
+            serverSetRoles(spUMRole);
         }
     }
 
 
-    public int starFillUserManagement(int intPos) {
-        if (intPos >= allEmployees.size()) {
-            intPos = 0;
+    public void setUMNewPicture(ImageView ivUMPicture) {
+        if (ivUMPicture != null) {
+            this.ivUMPicture = ivUMPicture;
         }
-
-        if (intPos < 0) {
-
-            intPos = 0;
-        }
-
-        userCurrentSelectedUm = allEmployees.get(intPos);
-        populateUserManagementControlls(allEmployees.get(intPos));
-        return intPos;
     }
 
-    private void populateUserManagementControlls(User user) {
-        etUMTitle.setText(user.getStrTitle());
-        etUMFirstName.setText(user.getStrFirstname());
-        etUMLastName.setText(user.getStrLastname());
-        String strPicture = user.getStrPicture();
+    public void setRb_RConfidentialUM(RadioButton rb_RConfidentialUM) {
+        this.rb_RConfidentialUM = rb_RConfidentialUM;
+    }
 
-
-       /* setIBNewPicture(
-                StringToBitMap(strPicture)
-                , ibUMPicture
-        );*/
-
-        etUMPassword.setText(user.getStrPassword());
-        etUMUserName.setText(user.getStrUserName());
-
-        if (user.getIntRoleID() == 2) {
-            spUMRole.setSelection(arrRoles.indexOf("User"));
-        } else {
-
-            spUMRole.setSelection(arrRoles.indexOf("Admin"));
-        }
-
-        if (user.getIntConfidentialID() == 1) {
-            rb_RConfidentialUM.setChecked(true);
-        } else {
-
-            rb_NConfidentialUM.setChecked(true);
-        }
-
+    public void setRb_NConfidentialUM(RadioButton rb_NConfidentialUM) {
+        this.rb_NConfidentialUM = rb_NConfidentialUM;
     }
 
     /**
@@ -507,7 +743,11 @@ public class Controller {
     EditText etLoginPassword, etLoginUserName;
     TextView tvLoginInformation;
     User loggedInUser;
-    public boolean isLoggedIn = true;
+    public boolean isLoggedIn = false;
+
+    public User getLoggedInUser() {
+        return loggedInUser;
+    }
 
     public boolean serverCheckLoginCredential(String strUserName, String strPassword) {
         loggedInUser = null;
@@ -536,6 +776,11 @@ public class Controller {
         if (tvLoginInformation != null) {
             this.tvLoginInformation = tvLoginInformation;
         }
+    }
+
+    public void serverLogout() {
+        loggedInUser = null;
+        isLoggedIn = false;
     }
 
 
@@ -588,9 +833,9 @@ public class Controller {
     }
 
 
-    public void deleteEmployee() {
+    public void serverDeleteEmployee() {
 
-        if (currentUser.getIntEmployeeID() == userCurrentSelectedUm.getIntEmployeeID()) {
+        if (loggedInUser.getIntEmployeeID() == userCurrentSelectedUm.getIntEmployeeID()) {
             alertDialogBuilder.setTitle(mainActivity.getText(R.string.Delete_Yourself_Title).toString());
             alertDialogBuilder.setMessage(mainActivity.getText(R.string.Delete_Yourself_Text).toString());
             alertDialogBuilder.setPositiveButton(mainActivity.getText(R.string.alertD_YES), new DialogInterface.OnClickListener() {
@@ -679,16 +924,15 @@ public class Controller {
     public void serverDeleteUser(int intUserID, int intEmployeeID, int intPictureID) {
         try {
 
+            pepperDB.deleteEmployeeData(intEmployeeID, intPictureID, intUserID);
             MessageSystem msgSys = new MessageSystem(mainActivity.getText(R.string.Suc_Delete).toString());
             msgSys.setType(MessageType.Suc_IUD);
 
             showInformation(msgSys);
-            pepperDB.deleteEmployeeData(intEmployeeID, intPictureID, intUserID);
         } catch (Exception ex) {
             String err = "";
             err = ex.getMessage();
             err += "";
-
 
 
             MessageSystem msgSys = new MessageSystem(mainActivity.getText(R.string.Error_Delete).toString() + ex.getMessage());
@@ -705,7 +949,7 @@ public class Controller {
     //New User Controlls
     EditText etNuFirstName, etNuTitle, etNuLastName, etNuPassword, etNuUserName;
     String strNewUserPicture;
-    Spinner spRole;
+    Spinner spNURole;
     int intNuRoleID, intNuTitleID;
     ImageButton ibNewPicture;
     RadioGroup rg_Nu_Confidential;
@@ -713,22 +957,24 @@ public class Controller {
 
     public void addNewUser() {
         try {
+            long intName = spNURole.getSelectedItemId();
+
 
             int intCheckedID = rg_Nu_Confidential.getCheckedRadioButtonId();
-
 
             if (intCheckedID == rb_Nu_NConfidentalInfo.getId()) {
                 serverInsertUser(etNuTitle.getText().toString()
                         , etNuFirstName.getText().toString()
                         , etNuLastName.getText().toString()
 
-                        , newUserPictureChecker(strNewUserPicture)
-
 
                         , etNuUserName.getText().toString()
                         , etNuPassword.getText().toString()
 
-                        , (int) spRole.getSelectedItemId()
+
+                        , newUserPictureChecker(strNewUserPicture)
+
+                        , ((int) spNURole.getSelectedItemId()) + 1
                         , 2
                 );
             } else if (intCheckedID == rb_Nu_RConfidentalInfo.getId()) {
@@ -736,13 +982,13 @@ public class Controller {
                         , etNuFirstName.getText().toString()
                         , etNuLastName.getText().toString()
 
-                        , newUserPictureChecker(strNewUserPicture)
-
 
                         , etNuUserName.getText().toString()
                         , etNuPassword.getText().toString()
 
-                        , (int) spRole.getSelectedItemId()
+                        , newUserPictureChecker(strNewUserPicture)
+
+                        , ((int) spNURole.getSelectedItemId()) + 1
                         , 1
                 );
 
@@ -757,12 +1003,24 @@ public class Controller {
         }
     }
 
+    public void serverSetRoles(Spinner spRole) {
+        serverGetRoles();
+        populateSpinner(spRole, arrRoles);
+
+    }
+
+    public void populateSpinner(Spinner spinner, ArrayList arrayList) {
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(mainActivity, android.R.layout.simple_spinner_item, arrayList);
+        spinner.setAdapter(adapter);
+    }
+
+
     public void clearNewUser() {
         etNuTitle.setText("");
         etNuFirstName.setText("");
         etNuLastName.setText("");
         strNewUserPicture = "";
-        spRole.setSelection(1);
+        spNURole.setSelection(1);
         etNuUserName.setText("");
         etNuPassword.setText("");
         ibNewPicture.setImageDrawable(null);
@@ -785,9 +1043,10 @@ public class Controller {
     // New User Setters
 
 
-    public void setSpRole(Spinner spRole) {
-        if (spRole != null) {
-            this.spRole = spRole;
+    public void setSpNURole(Spinner spNURole) {
+        if (spNURole != null) {
+            this.spNURole = spNURole;
+            serverSetRoles(spNURole);
         }
     }
 
@@ -861,15 +1120,14 @@ public class Controller {
         String strMessage;
         if (tvLoginInformation != null) {
             try {
-                alertDialogBuilder = new AlertDialog.Builder(mainActivity);
 
-                        alertDialogBuilder.setTitle("PepperMRI");
-                        alertDialogBuilder.setMessage(msgSys.toString());
-                        alertDialogBuilder.setPositiveButton(mainActivity.getText(R.string.alertD_OK), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface arg0, int arg1) {
-                            }
-                        });
+                alertDialogBuilder.setTitle("Pepper MRI");
+                alertDialogBuilder.setMessage(msgSys.toString());
+                alertDialogBuilder.setPositiveButton(mainActivity.getText(R.string.alertD_OK), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface arg0, int arg1) {
+                    }
+                });
 
                 AlertDialog alertDialog = alertDialogBuilder.create();
                 alertDialog.show();
@@ -881,5 +1139,4 @@ public class Controller {
             }
         }
     }
-
 }
