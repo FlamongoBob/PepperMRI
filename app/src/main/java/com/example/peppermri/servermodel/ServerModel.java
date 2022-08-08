@@ -69,13 +69,16 @@ public class ServerModel {
     public Runnable prepareServer() {
         Runnable r;
         try {
+
             listener = new ServerSocket(intPort, 10, inetAddress);
+            r = createServer();
+
+            return r;
         } catch (Exception e) {
             String err = e.getMessage();
             err += "";
         }
-        r = createServer();
-        return r;
+        return null;
     }
 
     /**
@@ -96,7 +99,7 @@ public class ServerModel {
             String err = e.getMessage();
             err += "";
 
-            controller.isServerStarted = true;
+            controller.isServerStarted = false;
         }
 
         r = new Runnable() {
@@ -185,14 +188,20 @@ public class ServerModel {
     }
 
 
-    public void sendMessage(MessageSystem msgSys, int intUserID) {
+    public boolean sendMessage(MessageSystem msgSys, int intUserID) {
         for (int i = 0; i < srvClient.size(); i++) {
             ServerClient svClient = srvClient.get(i);
             if (svClient.getIntUserID() == intUserID) {
-                svClient.send(msgSys);
-                i = srvClient.size() + 1;
+                try {
+                    svClient.send(msgSys);
+                    i = srvClient.size() + 1;
+                    return true;
+                }catch (Exception ex){
+                    return false;
+                }
             }
         }
+        return false;
     }
 
     public void sendMessage(MessageUser msgU, int intUserID) {

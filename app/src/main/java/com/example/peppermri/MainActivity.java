@@ -40,19 +40,12 @@ public class MainActivity extends AppCompatActivity {//extends RobotActivity imp
 
 
     public void retrieve() {
-        try {
-            this.controller = mService.getController();
-            this.pepperDB = mService.getPepperDB();
-            this.manager = mService.getManager();
-            manager.resetMainActivity(this);
-           // this.manager = new Manager(this, this.controller, this.getSupportFragmentManager());
-            manager.goToLogin();
 
-        }catch (Exception ex){
-            String err ="";
-            err = ex.getMessage();
-            err+="";
-        }
+        this.controller = mService.getController();
+        this.pepperDB = mService.getPepperDB();
+        this.manager = mService.getManager();
+        manager.resetMainActivity(this);
+        manager.goToLogin();
     }
 
     public void startServer() {
@@ -81,18 +74,8 @@ public class MainActivity extends AppCompatActivity {//extends RobotActivity imp
     @Override
     protected void onStart() {
         super.onStart();
-
-        try {
-
-            Intent newIntent = new Intent(this, LocalService.class);
-            mainActivity.bindService(newIntent, connection, Context.BIND_AUTO_CREATE);
-
-        } catch (Exception ex) {
-            String err = "";
-            err = ex.getMessage();
-            err += "";
-
-        }
+        Intent newIntent = new Intent(this, LocalService.class);
+        mainActivity.bindService(newIntent, connection, Context.BIND_AUTO_CREATE);
     }
 
 

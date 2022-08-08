@@ -77,7 +77,9 @@ public class LocalService extends Service {
 
             InetAddress inetAddress = InetAddress.getByName(ipAddress);
            // InetAddress inetAddress = InetAddress.getByName(strIPAdress);
+
             server = controller.startServer(intPortNr, controller, inetAddress, mainActivity);
+
         }catch (Exception exception){
             server = null;
             controller = null;

@@ -33,10 +33,10 @@ public class Fragment_PepperInformation extends Fragment {
     Controller controller;
     Manager manager;
 
-    TextView tvQuestion1,tvQuestion2,tvQuestion3;
+    TextView tvQuestion1, tvQuestion2, tvQuestion3;
     ScrollView svQuestions;
-    RadioGroup rgQuestion1,rgQuestion2,rgQuestion3;
-    RadioButton rb_Question1_Yes,rb_Question1_No,rb_Question2_Yes,rb_Question2_No,rb_Question3_Yes,rb_Question3_No;
+    RadioGroup rgQuestion1, rgQuestion2, rgQuestion3;
+    RadioButton rb_Question1_Yes, rb_Question1_No, rb_Question2_Yes, rb_Question2_No, rb_Question3_Yes, rb_Question3_No;
     View vRoot;
 
 
@@ -46,30 +46,22 @@ public class Fragment_PepperInformation extends Fragment {
         this.manager = manager;
     }
 
-    public void resetFragment(MainActivity mainActivity){
+    public void resetFragment(MainActivity mainActivity) {
         this.mainActivity = mainActivity;
 
-        LayoutInflater inflater = (LayoutInflater)   getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         vRoot = inflater.inflate(R.layout.fragment__pepper_information, null);
         initiateControls(vRoot);
     }
 
-    public void resetMainActivity_Pepper(MainActivity_Pepper mainActivity_Pepper){
+    public void resetMainActivity_Pepper(MainActivity_Pepper mainActivity_Pepper) {
         this.mainActivity_Pepper = mainActivity_Pepper;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        try {
-            setHasOptionsMenu(true);
-            super.onCreate(savedInstanceState);
-
-
-        }catch(Exception ex){
-            String err ="";
-            err = ex.getMessage();
-            err+="";
-        }
+        setHasOptionsMenu(true);
+        super.onCreate(savedInstanceState);
     }
 
     @Override
@@ -89,7 +81,7 @@ public class Fragment_PepperInformation extends Fragment {
         return vRoot;
     }
 
-    public void initiateControls(View vRoot){
+    public void initiateControls(View vRoot) {
 
         svQuestions = vRoot.findViewById(R.id.svQuestions);
         svQuestions.setVisibility(View.INVISIBLE);

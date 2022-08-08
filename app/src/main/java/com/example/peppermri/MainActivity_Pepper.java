@@ -36,32 +36,22 @@ public class MainActivity_Pepper extends RobotActivity implements RobotLifecycle
 
 
     TextView tvQuestion1, tvQuestion2, tvQuestion3;
-    RadioButton rbQuestion1_Yes, rbQuestion1_No
-            , rbQuestion2_Yes, rbQuestion2_No
-            , rbQuestion3_Yes, rbQuestion3_No;
+    RadioButton rbQuestion1_Yes, rbQuestion1_No, rbQuestion2_Yes, rbQuestion2_No, rbQuestion3_Yes, rbQuestion3_No;
 
     ImageView ivEmployee;
     TextView tvEmployeeTitle, tvEmployeeFirstName, tvEmployeeLastName, tvEmployeeInfo;
 
     ConstraintLayout clPepper1, clPepper2;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        try {
-            super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_main_pepper);
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main_pepper);
 
+        Intent intent = new Intent(this, LocalService.class);
+        this.bindService(intent, connection, Context.BIND_AUTO_CREATE);
 
-            Intent intent = new Intent(this, LocalService.class);
-            this.bindService(intent, connection, Context.BIND_AUTO_CREATE);
-
-            initiateControls();
-
-        } catch (Exception ex) {
-
-            String err = ex.getMessage();
-            err += "";
-
-        }
+        initiateControls();
     }
 
     public void maUnbindService() {
@@ -100,9 +90,9 @@ public class MainActivity_Pepper extends RobotActivity implements RobotLifecycle
 
     }
 
-    public void passControls(){
+    public void passControls() {
 
-        if(this.controller !=null) {
+        if (this.controller != null) {
 
             controller.setRbQuestion1_Yes(rbQuestion1_Yes);
             controller.setRbQuestion1_No(rbQuestion1_No);
@@ -128,56 +118,48 @@ public class MainActivity_Pepper extends RobotActivity implements RobotLifecycle
     }
 
     public void retrieve() {
-        try {
-            this.controller = mService.getController();
-            this.pepperDB = mService.getPepperDB();
-            passControls();
+        this.controller = mService.getController();
+        this.pepperDB = mService.getPepperDB();
+        passControls();
 
-            hideAllControls();
-            btnBack.setOnClickListener(view -> {
-                manager.goBack(this);
-            });
+        hideAllControls();
+        btnBack.setOnClickListener(view -> {
+            manager.goBack(this);
+        });
 
-            btnDone.setOnClickListener(view -> {
+        btnDone.setOnClickListener(view -> {
 
-                controller.checkConfidentialInfoSender(1);
+            controller.checkConfidentialInfoSender(1);
 
-            });
-
-        } catch (Exception ex) {
-            String err = "";
-            err = ex.getMessage();
-            err += "";
-        }
+        });
     }
 
-    public void showEmployee(){
-        if(controller.isBlnHasAccepted()) {
+    public void showEmployee() {
+        if (controller.isBlnHasAccepted()) {
             controller.controlsShowOrHideEmployee(View.VISIBLE);
         }
     }
 
-    public void chatBotDone(){
+    public void chatBotDone() {
         controller.resetEmployeeAndBool();
     }
 
-    public void hideEmployee(){
+    public void hideEmployee() {
         controller.controlsShowOrHideEmployee(View.INVISIBLE);
     }
 
-    public void showQuestions(){
+    public void showQuestions() {
         controller.controlsShowOrHideEmployee(View.VISIBLE);
     }
 
-    public void hideQuestions(){
+    public void hideQuestions() {
         controller.controlsShowOrHideEmployee(View.INVISIBLE);
     }
 
-    public void hideAllControls(){
+    public void hideAllControls() {
 
         controller.controlsShowOrHideAll(View.INVISIBLE);
     }
-
 
 
     @Override
@@ -194,7 +176,6 @@ public class MainActivity_Pepper extends RobotActivity implements RobotLifecycle
     public void onRobotFocusRefused(String reason) {
 
     }
-
 
     /**
      * Defines callbacks for service binding, passed to bindService()

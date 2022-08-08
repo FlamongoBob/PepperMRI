@@ -38,10 +38,10 @@ public class Fragment_Login extends Fragment {
         this.manager = manager;
     }
 
-    public void resetFragment(MainActivity mainActivity){
+    public void resetFragment(MainActivity mainActivity) {
         this.mainActivity = mainActivity;
 
-        LayoutInflater inflater = (LayoutInflater)   getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         vRoot = inflater.inflate(R.layout.fragment__login, null);
         initiateLoginControls(vRoot);
     }
@@ -64,52 +64,45 @@ public class Fragment_Login extends Fragment {
 
 
     public void initiateLoginControls(View vRoot) {
-        try {
+        EditText etLoginUserName = vRoot.findViewById(R.id.etLoginUserName);
+        controller.setEtLoginUsername(etLoginUserName);
+        etLoginUserName.setText("ADMIN");
 
-            EditText etLoginUserName = vRoot.findViewById(R.id.etLoginUserName);
-            controller.setEtLoginUsername(etLoginUserName);
-            etLoginUserName.setText("ADMIN");
+        EditText etLoginPassword = vRoot.findViewById(R.id.etLoginPassword);
+        controller.setEtLoginPassword(etLoginPassword);
+        etLoginPassword.setText("ADMIN");
 
-            EditText etLoginPassword = vRoot.findViewById(R.id.etLoginPassword);
-            controller.setEtLoginPassword(etLoginPassword);
-            etLoginPassword.setText("ADMIN");
+        btnLogin = vRoot.findViewById(R.id.btnLogin);
+        btnLogin.setOnClickListener(view -> {
+            tvLoginInformation = vRoot.findViewById(R.id.tvLoginInformation);
+            controller.setTvLoginInformation(tvLoginInformation);
+            if (!isLoggedIn) {
+                isLoggedIn = controller.serverCheckLoginCredential(etLoginUserName.getText().toString()
+                        , etLoginPassword.getText().toString());
+            } else {
 
-            btnLogin = vRoot.findViewById(R.id.btnLogin);
-            btnLogin.setOnClickListener(view -> {
-                tvLoginInformation = vRoot.findViewById(R.id.tvLoginInformation);
-                controller.setTvLoginInformation(tvLoginInformation);
-                if (!isLoggedIn) {
-                    isLoggedIn = controller.serverCheckLoginCredential(etLoginUserName.getText().toString()
-                            , etLoginPassword.getText().toString());
-                } else {
+                alertDialogBuilder = new AlertDialog.Builder(mainActivity);
+                alertDialogBuilder.setTitle(R.string.Already_Logged_In_Title);
+                alertDialogBuilder.setMessage(R.string.Already_Logged_In_Text);
+                alertDialogBuilder.setPositiveButton(R.string.alertD_OK, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        Toast.makeText(mainActivity, R.string.Page_not_Changed, Toast.LENGTH_SHORT).show();
+                    }
+                });
+                alertDialog = alertDialogBuilder.create();
+                alertDialog.show();
+            }
+            if (isLoggedIn) {
+                tvLoginInformation.setText(R.string.msg_SucLogin);
+            } else {
+                tvLoginInformation.setText(R.string.msg_UnSucLogin);
+            }
 
-                    alertDialogBuilder = new AlertDialog.Builder(mainActivity);
-                    alertDialogBuilder.setTitle(R.string.Already_Logged_In_Title);
-                    alertDialogBuilder.setMessage(R.string.Already_Logged_In_Text);
-                    alertDialogBuilder.setPositiveButton(R.string.alertD_OK, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface arg0, int arg1) {
-                            Toast.makeText(mainActivity, R.string.Page_not_Changed, Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                    alertDialog = alertDialogBuilder.create();
-                    alertDialog.show();
-                }
-                if (isLoggedIn) {
-                    tvLoginInformation.setText(R.string.msg_SucLogin);
-                } else {
-                    tvLoginInformation.setText(R.string.msg_UnSucLogin);
-                }
-
-            });
-
-        } catch (Exception ex) {
-            String err = "";
-            err = ex.getMessage();
-        }
+        });
     }
 
-    public void setTvLogOutText(){
+    public void setTvLogOutText() {
         tvLoginInformation.setText(R.string.Suc_LogOut);
     }
 

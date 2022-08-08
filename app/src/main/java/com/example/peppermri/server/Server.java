@@ -27,16 +27,9 @@ public class Server {
      * @param inetAddress
      */
     public Server(int port, Controller controller, InetAddress inetAddress, MainActivity mainActivity) {
-        try {
             if (!controller.isServerStarted) {
-                //new
                 serverModel = new ServerModel(controller, port, inetAddress, mainActivity);
             }
-
-        } catch (Exception e) {
-            String err = "";
-            err = e.getMessage();
-        }
     }
 
     public String getIP(){
@@ -69,10 +62,11 @@ public class Server {
             }
     }
 
-    public void sendMessage(MessageSystem msgSys ,int intUserID) {
+    public boolean sendMessage(MessageSystem msgSys ,int intUserID) {
         if (serverModel != null && msgSys!= null && intUserID >0){
-            serverModel.sendMessage(msgSys,intUserID);
+          return serverModel.sendMessage(msgSys,intUserID);
         }
+        return false;
     }
     public void sendMessage(MessageUser msgU , int intUserID) {
         if (serverModel != null && msgU!= null && intUserID >0){

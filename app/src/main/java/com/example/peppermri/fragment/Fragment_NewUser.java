@@ -147,48 +147,40 @@ public class Fragment_NewUser extends Fragment {
     private void generateUserName(String strFirstName, String strLastName) {
         String strUserName = "";
         Random random = new Random();
-        try {
 
-            if (!strFirstName.isEmpty()) {
-                this.strFirstName = strFirstName;
-                this.strFirstName = this.strFirstName.replace(" ", "");
-            }
-
-            if (!strLastName.isEmpty()) {
-                this.strLastName = strLastName;
-                this.strLastName = this.strLastName.replace(" ", "");
-
-            }
-
-            if (this.strFirstName.length() >= 2 && this.strLastName.length() >= 2) {
-                if (etNuUserName != null) {
-
-                    int intFirstNameLength = this.strFirstName.length();
-                    int intLastNameLength = this.strLastName.length();
-
-                    if (intFirstNameLength >= 2 && intLastNameLength >= 4) {
-
-                        etNuUserName.setText(this.strFirstName.substring(0, 2) + "." + this.strLastName.substring(0, 4));
-
-                    } else if (intFirstNameLength >= 2 && intLastNameLength < 4) {
-                        strUserName = this.strFirstName.substring(0, 2) + "." + this.strLastName.substring(0, 2);
-
-                        for (int i = intLastNameLength; i < 4; i++) {
-                            strUserName += "" + random.nextInt(10);
-                        }
-
-                        etNuUserName.setText(strUserName);
-
-                    }
-                }
-
-            }
-        } catch (Exception ex) {
-            String err = "";
-            err = ex.getMessage();
-            err += "";
+        if (!strFirstName.isEmpty()) {
+            this.strFirstName = strFirstName;
+            this.strFirstName = this.strFirstName.replace(" ", "");
         }
 
+        if (!strLastName.isEmpty()) {
+            this.strLastName = strLastName;
+            this.strLastName = this.strLastName.replace(" ", "");
 
+        }
+
+        if (this.strFirstName.length() >= 2 && this.strLastName.length() >= 2) {
+            if (etNuUserName != null) {
+
+                int intFirstNameLength = this.strFirstName.length();
+                int intLastNameLength = this.strLastName.length();
+
+                if (intFirstNameLength >= 2 && intLastNameLength >= 4) {
+
+                    etNuUserName.setText(this.strFirstName.substring(0, 2) + "." + this.strLastName.substring(0, 4));
+
+                } else if (intFirstNameLength >= 2 && intLastNameLength < 4) {
+                    strUserName = this.strFirstName.substring(0, 2) + "." + this.strLastName.substring(0, 2);
+
+                    for (int i = intLastNameLength; i < 4; i++) {
+                        strUserName += "" + random.nextInt(10);
+                    }
+
+                    etNuUserName.setText(strUserName);
+
+                }
+            }
+
+        }
     }
 }

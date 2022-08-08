@@ -39,7 +39,7 @@ public class Fragment_ServerConnection extends Fragment {
     public void resetFragment(MainActivity mainActivity) {
         this.mainActivity = mainActivity;
 
-        LayoutInflater inflater = (LayoutInflater)   getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         vRoot = inflater.inflate(R.layout.fragment__server_connection, null);
         initiateServerControls(vRoot);
     }
@@ -60,55 +60,43 @@ public class Fragment_ServerConnection extends Fragment {
     }
 
     public void initiateServerControls(View vRoot) {
-        try {
 
-            btnStartServer = vRoot.findViewById(R.id.btnStartServer);
-            btnStartServer.setOnClickListener(view -> {
-                mainActivity.startServer();
-                getInformation();
-                tvStatusServerConnection.setText(R.string.Online);
-            });
+        btnStartServer = vRoot.findViewById(R.id.btnStartServer);
+        btnStartServer.setOnClickListener(view -> {
+            mainActivity.startServer();
+            getInformation();
+            tvStatusServerConnection.setText(R.string.Online);
+        });
 
-            btnStopServer = vRoot.findViewById(R.id.btnStopServer);
-            btnStopServer.setOnClickListener(view -> {
+        btnStopServer = vRoot.findViewById(R.id.btnStopServer);
+        btnStopServer.setOnClickListener(view -> {
 
-                mainActivity.stopServer();
-                getInformation();
+            mainActivity.stopServer();
+            getInformation();
 
-                tvStatusServerConnectionIP.setText(R.string.Offline);
-                tvStatusServerConnectionPort.setText(R.string.Offline);
-                tvStatusServerConnection.setText(R.string.Offline);
-            });
+            tvStatusServerConnectionIP.setText(R.string.Offline);
+            tvStatusServerConnectionPort.setText(R.string.Offline);
+            tvStatusServerConnection.setText(R.string.Offline);
+        });
 
 
-            iv = vRoot.findViewById(R.id.iv_Robot);
-            tvStatusServerConnection = vRoot.findViewById(R.id.tvStatusServerConnection);
-            tvStatusServerConnectionIP = vRoot.findViewById(R.id.tvStatusServerConnectionIP);
-            tvStatusServerConnectionPort = vRoot.findViewById(R.id.tvStatusServerConnectionPort);
+        iv = vRoot.findViewById(R.id.iv_Robot);
+        tvStatusServerConnection = vRoot.findViewById(R.id.tvStatusServerConnection);
+        tvStatusServerConnectionIP = vRoot.findViewById(R.id.tvStatusServerConnectionIP);
+        tvStatusServerConnectionPort = vRoot.findViewById(R.id.tvStatusServerConnectionPort);
 
-            //isCreatedServer = true;
-        } catch (Exception ex) {
-            String err = "";
-            err = ex.getMessage();
-            //isCreatedServer = false;
-        }
     }
 
 
     public void getInformation() {
 
         if (controller.isServerStarted) {
-            //iv.setColorFilter(ContextCompat.getColor(R.color.connected_Green));
-
 
             iv.setColorFilter(ContextCompat.getColor(this.getContext(), R.color.connected_Green));
-
             tvStatusServerConnection.setText("Server is running");
         } else {
 
             iv.setColorFilter(ContextCompat.getColor(this.getContext(), R.color.disconnected_red));
-
-            //iv.setColorFilter(mainActivity.getColor(R.color.disconnected_red));
             tvStatusServerConnection.setText("Server is not running");
         }
 

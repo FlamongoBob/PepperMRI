@@ -58,29 +58,11 @@ public class Controller {
         this.pepperDB = pepperDB;
 
         this.alertDialogBuilder = new AlertDialog.Builder(mainActivity);
-        try {
-
-            //InetAddress inetAddress = InetAddress.getByName(strIPAdress);
-            //startServer(intPortNr, this,inetAddress,mainActivity);
-
-        } catch (Exception ex) {
-            isServerStarted = false;
-            String err = ex.getMessage();
-            err += "";
-        }
     }
 
     public Server startServer(int intPortNr, Controller controller, InetAddress inetAddress, MainActivity mainActivity) {
-        try {
 
-            server = new Server(intPortNr, controller, inetAddress, mainActivity);
-
-        } catch (Exception ex) {
-            isServerStarted = false;
-            String err = ex.getMessage();
-            err += "";
-        }
-        return server;
+        return server = new Server(intPortNr, controller, inetAddress, mainActivity);
     }
 
     public boolean clientCheckLoginCredential(String strUserName, String strPassword) {
@@ -160,8 +142,8 @@ public class Controller {
     }
 
     public void resetEmployeeAndBool() {
-            blnHasAccepted = false;
-            hasChoiceStarted = false;
+        blnHasAccepted = false;
+        hasChoiceStarted = false;
 
         tvEmployeeTitle.setText("");
         tvEmployeeFirstName.setText("");
@@ -179,7 +161,7 @@ public class Controller {
             User user = arrLoggedInUsers.get(i);
             if (user.getIntGetsConfidentialInfo() == 1) {
                 int intUserID = user.getIntUserID();
-                hasChoiceStarted  =true;
+                hasChoiceStarted = true;
                 MessageSystem msgSys = new MessageSystem(intRequestRound + mainActivity.getText(R.string.Request_Round).toString());
                 msgSys.setType(MessageType.Choose);
                 server.sendMessage(msgSys, intUserID);
@@ -223,19 +205,17 @@ public class Controller {
         intPossibleResponse = 0;
         intDeniedCounter = 0;
         intRequestRound = 1;
-        hasChoiceStarted=false;
+        hasChoiceStarted = false;
     }
 
     public boolean sendPatientInformation(int intUserID) {
         try {
-            /**TODO boolReturn*/
             MessageSystem msgSys = new MessageSystem(
                     setPatientInfoMessageText()
             );
             msgSys.setType(MessageType.Patient);
 
-            server.sendMessage(msgSys, intUserID);
-            return true;
+            return server.sendMessage(msgSys, intUserID);
         } catch (Exception ex) {
 
             String err = "";
@@ -292,18 +272,14 @@ public class Controller {
     }
 
     public Bitmap StringToBitMap(String encodedString) {
-        try {
-            String strSubstring = encodedString.substring(0, 9);
-            if (!strSubstring.equals("NoPicture")) {
-                if (!encodedString.isEmpty()) {
-                    byte[] encodeByte = Base64.decode(encodedString, Base64.DEFAULT);
-                    Bitmap bitmap = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
-                    return bitmap;
+        String strSubstring = encodedString.substring(0, 9);
+        if (!strSubstring.equals("NoPicture")) {
+            if (!encodedString.isEmpty()) {
+                byte[] encodeByte = Base64.decode(encodedString, Base64.DEFAULT);
+                Bitmap bitmap = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
+                return bitmap;
 
-                }
             }
-        } catch (Exception e) {
-            e.getMessage();
         }
         return null;
     }
@@ -388,31 +364,17 @@ public class Controller {
      * Client Response Messages
      */
     public void adminTestMessage(TextView tv) {
-        //TextView tv2 = tv ;
-        ///tv2.setText(pepperDB.Check());
-        try {
-            MessageSystem msgSys = new MessageSystem(mainActivity.getText(R.string.Admin_Test).toString());
-            msgSys.setType(MessageType.Patient);
-            server.sendBroadcastMessage(msgSys);
-        } catch (Exception ex) {
-            String err = "";
-            err = ex.getMessage();
-            err = "";
-        }
+
+        MessageSystem msgSys = new MessageSystem(mainActivity.getText(R.string.Admin_Test).toString());
+        msgSys.setType(MessageType.Patient);
+        server.sendBroadcastMessage(msgSys);
 
     }
 
     public void adminDisconnectMessage() {
-        try {
             MessageSystem msgSys = new MessageSystem(mainActivity.getText(R.string.Admin_Test).toString());
             msgSys.setType(MessageType.Disconnect);
             server.sendBroadcastMessage(msgSys);
-        } catch (Exception ex) {
-            String err = "";
-            err = ex.getMessage();
-            err = "";
-        }
-
     }
 
 
